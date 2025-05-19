@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+
+    <div x-data="{ open: false }" class="relative min-h-screen flex">
+
+        <aside :class="{
+            'translate-x-0': open,
+            '-translate-x-full': !open
+            }"
+            class="fixed top-0 left-0 z-50 md:z-auto w-72 h-full bg-white shadow-lg md:shadow-none transform md:translate-x-0 transition-transform duration-300 overflow-y-auto p-4 flex-shrink-0">
+
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">Players</h2>
+                <button @click="open = false" class="text-gray-500 hover:text-gray-700 md:hidden">
+                    ✕
+                </button>
+            </div>
+
+            <div class="space-y-3" x-data="{ 
+            players: ['Gary Payton II','Jonathan Kuminga','Taran Armstrong','Brandon Podziemski','Moses Moody','Kevin Looney','Buddy Hield','Jimmy Butler III','Braxton Key','Gui Santos','Quinten Post','Draymond Green','Stephen Curry','Kevin Knox II','Trayce Jackson-Davis','Jackson Rowe','Pat Spencer'], 
+
+            get playerData() {
+                return this.players.map(player => {
+                    return {
+                        name: player,
+                        data: player.replace(' ','-'),
+                    }
+                });
+            }
+        }">
+                <template x-for="player in playerData" :key="player.data">
+                    <div class="flex items-center gap-4 p-3 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer transition"
+                        onclick="loadData('${player.data}-Shotdata.csv')">
+                        <img src='img/user.png' alt="" class="w-10 h-10 rounded-full object-cover">
+                        <p class="text-gray-800 font-medium" x-text="player.name"></p>
+                    </div>
+                </template>
+            </div>
+        </aside>
+
+        <!-- Backdrop for mobile -->
+        <div x-show="open" @click="open = false" x-transition.opacity
+            class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
+
+        <!-- Main content area -->
+        <main>
+            <!-- LEGACY CODE ------------------------------------------------------------
+            Player Selector
+            <select id="playerSelect">
+                <option value="Buddy-Hield-Shotdata.csv">Buddy Hield</option>
+                <option value="Steph-Curry-Shotdata.csv">Stephen Curry</option>
+            </select>
+
+            Filter UI
+            <div id="filters"></div>
+
+            Charts
+            <svg id="mixedChart" width="800" height="400"></svg>
+            <svg id="pieChart" width="400" height="400"></svg> 
+            ------------------------------------------------------------------------------>
+        </main>
+
+        <!-- App Entry -->
+        <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
