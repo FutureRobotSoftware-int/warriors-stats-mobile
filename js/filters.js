@@ -1,85 +1,65 @@
-let filterOptions = new Map();
-let currentFilters = {};
+export function filtersUI() {
+	return {
+		filterCategories: [
+			{
+				category: "Shot Type",
+				options: ["3PT", "Mid-Range", "Layup", "Dunk"],
+			},
+			{
+				category: "Defense",
+				options: ["Man", "Zone", "Double Team"],
+			},
+			{
+				category: "Quarter",
+				options: ["1st", "2nd", "3rd", "4th"],
+			},
+		],
+		openCategories: [],
+		activeFilters: {},
 
-export function loadFilterMetadata(path) {
-	return d3.dsv(";", path).then((data) => {
-		console.log(data[0]);
-		filterOptions = d3.group(data, (d) => d.Category);
-		filterOptions.forEach((vals, key) => {
-			currentFilters[key] = vals.map((v) => v.Value); // Select all by default
-		});
-		return filterOptions;
-	});
-}
+		toggleCategory(index) {
+			if (this.openCategories.includes(index)) {
+				this.openCategories = this.openCategories.filter((i) => i !== index);
+			} else {
+				this.openCategories.push(index);
+			}
+		},
 
-export function buildFilterUIFromMetadata(containerSelector, onChange) {
-	const container = d3.select(containerSelector).html("");
+		toggleOption(category, option) {
+			if (!this.activeFilters[category])
+				this.activeFilters[category] = new Set();
 
-	filterOptions.forEach((values, category) => {
-		const section = container
-			.append("div")
-			.attr("class", "filter-group")
-			.attr("data-field", category);
-		section.append("strong").text(category);
+			const set = this.activeFilters[category];
 
-		section
-			.append("label")
-			.html(
-				`<input type="checkbox" class="filter-all" data-field="${category}" checked> All`,
-			);
+			if (set.has(option)) {
+				set.delete(option);
+			} else {
+				set.add(option);
+			}
 
-		values.forEach((v) => {
-			section.append("label").html(`
-        <input type="checkbox" class="filter-item" data-field="${category}" value="${v.Value}" checked> ${v.Value}
-      `);
-		});
-	});
+			this.activeFilters[category] = new Set(set);
+		},
 
-	setupFilterEvents(onChange);
-}
+		isActive(category, option) {
+			return this.activeFilters[category]?.has(option) ?? false;
+		},
 
-function setupFilterEvents(onChange) {
-	d3.selectAll(".filter-all").on("change", function () {
-		const field = this.dataset.field;
-		const checked = this.checked;
-		d3.selectAll(`input.filter-item[data-field="${field}"]`).property(
-			"checked",
-			checked,
-		);
-		currentFilters[field] = checked
-			? d3
-					.selectAll(`input.filter-item[data-field="${field}"]`)
-					.nodes()
-					.map((n) => n.value)
-			: [];
-		onChange();
-	});
+		toggleAll(category, checked) {
+			const options = this.filterCategories.find(
+				(c) => c.category === category,
+			).options;
 
-	d3.selectAll(".filter-item").on("change", function () {
-		const field = this.dataset.field;
-		const selected = d3
-			.selectAll(`input.filter-item[data-field="${field}"]:checked`)
-			.nodes()
-			.map((n) => n.value);
-		currentFilters[field] = selected;
-		const total = d3
-			.selectAll(`input.filter-item[data-field="${field}"]`)
-			.size();
-		const checked = selected.length;
-		d3.select(`input.filter-all[data-field="${field}"]`).property(
-			"checked",
-			total === checked,
-		);
-		onChange();
-	});
-}
+			if (checked) {
+				this.activeFilters[category] = new Set(options);
+			} else {
+				this.activeFilters[category] = new Set();
+			}
+		},
 
-export function getCurrentFilters() {
-	return currentFilters;
-}
-
-export function resetFilters() {
-	Object.keys(currentFilters).forEach((f) => (currentFilters[f] = []));
-	d3.selectAll(".filter-item").property("checked", false);
-	d3.selectAll(".filter-all").property("checked", false);
+		isAllSelected(category) {
+			const group = this.filterCategories.find((c) => c.category === category);
+			const selected = this.activeFilters[category];
+			return selected?.size === group.options.length;
+		},
+	};
 }

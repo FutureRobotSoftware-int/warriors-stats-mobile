@@ -8,72 +8,392 @@
     <link rel="stylesheet" href="style.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/embla-carousel/embla-carousel.umd.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/embla-carousel/embla-carousel.css" />
 </head>
 
-<body>
+<body class="overflow-hidden bg-gray-100">
 
-    <div x-data="{ open: false }" class="relative min-h-screen flex">
+    <div x-data="{ open: false }" class="w-screen min-h-screen flex">
 
-        <aside :class="{
-            'translate-x-0': open,
-            '-translate-x-full': !open
-            }"
-            class="fixed top-0 left-0 z-50 md:z-auto w-72 h-full bg-white shadow-lg md:shadow-none transform md:translate-x-0 transition-transform duration-300 overflow-y-auto p-4 flex-shrink-0">
+        <!-- Left Edge Toggle Button -->
+        <button x-show="!open" @click="open = true" x-transition
+            class="md:hidden fixed top-4 left-0 z-40 w-10 h-10 bg-blue-600 bg-opacity-70 text-white text-xl rounded-r-md shadow opacity-75 transition duration-200 flex items-center justify-center">
+            <img class="w-4 h-4" src="img/right-arrow.png">
+        </button>
 
-            <div class="flex justify-between items-center mb-4">
+        <!-- Sidebar -->
+        <aside :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
+            class="fixed  z-50 w-72 h-full bg-white shadow-lg transform transition-transform duration-300 overflow-y-auto md:translate-x-0 md:block">
+            <div class="flex justify-between items-center p-4 pb-0">
                 <h2 class="text-xl font-semibold text-gray-800">Players</h2>
                 <button @click="open = false" class="text-gray-500 hover:text-gray-700 md:hidden">
                     ✕
                 </button>
             </div>
 
-            <div class="space-y-3" x-data="{ 
-            players: ['Gary Payton II','Jonathan Kuminga','Taran Armstrong','Brandon Podziemski','Moses Moody','Kevin Looney','Buddy Hield','Jimmy Butler III','Braxton Key','Gui Santos','Quinten Post','Draymond Green','Stephen Curry','Kevin Knox II','Trayce Jackson-Davis','Jackson Rowe','Pat Spencer'], 
+            <div class="space-y-3 p-4" x-data="{
+                players: [
+                'Gary Payton II','Jonathan Kuminga','Taran Armstrong','Brandon Podziemski','Moses Moody',
+                'Kevin Looney','Buddy Hield','Jimmy Butler III','Braxton Key','Gui Santos',
+                'Quinten Post','Draymond Green','Stephen Curry','Kevin Knox II','Trayce Jackson-Davis',
+                'Jackson Rowe','Pat Spencer'
+                ],
+                search: '',
+                get filteredPlayers() {
+                return this.players
+                    .filter(player => player.toLowerCase().includes(this.search.toLowerCase()))
+                    .map(player => ({
+                    name: player,
+                    data: player.replaceAll(' ', '-')
+                    }));
+                }
+            }">
 
-            get playerData() {
-                return this.players.map(player => {
-                    return {
-                        name: player,
-                        data: player.replace(' ','-'),
-                    }
-                });
-            }
-        }">
-                <template x-for="player in playerData" :key="player.data">
+                <!-- Sticky Search Bar -->
+                <div class="sticky top-0 bg-white z-10 px-4 py-3 border-b">
+                    <input x-model="search" type="text" placeholder="Search players..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+
+                <!-- Loop -->
+                <template x-for="player in filteredPlayers" :key="player.data">
                     <div class="flex items-center gap-4 p-3 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer transition"
                         onclick="loadData('${player.data}-Shotdata.csv')">
                         <img src='img/user.png' alt="" class="w-10 h-10 rounded-full object-cover">
                         <p class="text-gray-800 font-medium" x-text="player.name"></p>
                     </div>
                 </template>
+
+                <!-- Fallback message -->
+                <template x-if="filteredPlayers.length === 0">
+                    <div class="text-gray-500 italic text-center py-4">
+                        No players found.
+                    </div>
+                </template>
             </div>
         </aside>
 
         <!-- Backdrop for mobile -->
-        <div x-show="open" @click="open = false" x-transition.opacity
-            class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
+        <div x-show="open" @click="open = false" x-transition.opacity class="fixed inset-0 opacity-50 bg-black z-40">
+        </div>
 
         <!-- Main content area -->
-        <main>
-            <!-- LEGACY CODE ------------------------------------------------------------
-            Player Selector
-            <select id="playerSelect">
-                <option value="Buddy-Hield-Shotdata.csv">Buddy Hield</option>
-                <option value="Steph-Curry-Shotdata.csv">Stephen Curry</option>
-            </select>
+        <main x-data x-init="$watch('$store.tab', value => {
+                if (value === 'charts') renderCharts();
+            })" class="flex-1 relative overflow-hidden">
 
-            Filter UI
-            <div id="filters"></div>
+            <!-- Floating Nav-Dock -->
+            <div class="absolute top-4 left-1/2 -translate-x-1/2 z-20">
+                <div class="bg-white rounded-full shadow-lg px-4 py-1 flex space-x-4">
+                    <button :class="$store.tab === 'resume' ? 'font-bold text-blue-600' : 'text-gray-500'"
+                        @click="$store.tab = 'resume'" class="transition">
+                        Resume
+                    </button>
+                    <button :class="$store.tab === 'filters' ? 'font-bold text-blue-600' : 'text-gray-500'"
+                        @click="$store.tab = 'filters'" class="transition">
+                        Filters
+                    </button>
+                    <button :class="$store.tab === 'charts' ? 'font-bold text-blue-600' : 'text-gray-500'"
+                        @click="$store.tab = 'charts'" class="transition">
+                        Charts
+                    </button>
+                </div>
+            </div>
 
-            Charts
-            <svg id="mixedChart" width="800" height="400"></svg>
-            <svg id="pieChart" width="400" height="400"></svg> 
-            ------------------------------------------------------------------------------>
+            <!-- Section Panels -->
+            <div class="w-full h-full absolute top-0 left-0">
+                <!-- Resume -->
+                <!-- Resume Section -->
+                <div x-show="$store.tab === 'resume'" x-data="{
+                        selectedPlayer: {
+                            name: 'Stephen Curry',
+                            number: 30,
+                            position: 'Point Guard',
+                            ppg: 29.4,
+                            preferredAction: '3-Point Shot',
+                            makeMissRatio: '62 / 38',
+                            img: 'https://i.pravatar.cc/150?img=12'
+                        }
+                    }"
+                    class="w-full h-full p-6 md:pt-15 flex flex-col items-center justify-start space-y-6 overflow-hidden">
+
+                    <!-- Player Image -->
+                    <div class="w-32 h-32 rounded-full overflow-hidden shadow-lg">
+                        <img :src="selectedPlayer.img" alt="Player Image" class="object-cover w-full h-full" />
+                    </div>
+
+                    <!-- Player Name + Number -->
+                    <div class="text-center">
+                        <h2 class="text-2xl font-bold text-gray-800" x-text="selectedPlayer.name"></h2>
+                        <p class="text-gray-500 text-lg">#<span x-text="selectedPlayer.number"></span></p>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-xl text-sm md:text-base">
+                        <div class="bg-white p-4 rounded shadow text-center">
+                            <p class="font-semibold text-gray-600">Position</p>
+                            <p class="text-gray-800" x-text="selectedPlayer.position"></p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded shadow text-center">
+                            <p class="font-semibold text-gray-600">PPG</p>
+                            <p class="text-gray-800" x-text="selectedPlayer.ppg"></p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded shadow text-center">
+                            <p class="font-semibold text-gray-600">Preferred Action</p>
+                            <p class="text-gray-800" x-text="selectedPlayer.preferredAction"></p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded shadow text-center">
+                            <p class="font-semibold text-gray-600">Make/Miss</p>
+                            <p class="text-gray-800" x-text="selectedPlayer.makeMissRatio"></p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Filters Section -->
+                <div x-show="$store.tab === 'filters'" x-data="{
+                        filtersUI() {
+                            return {
+                                filterCategories: [
+                                {
+                                    category: 'Shot Type',
+                                    options: ['3PT', 'Mid-Range', 'Layup', 'Dunk']
+                                },
+                                {
+                                    category: 'Defense',
+                                    options: ['Man', 'Zone', 'Double Team']
+                                },
+                                {
+                                    category: 'Quarter',
+                                    options: ['1st', '2nd', '3rd', '4th']
+                                }
+                                ],
+                                openCategories: [],
+                                activeFilters: {},
+
+                                toggleCategory(index) {
+                                if (this.openCategories.includes(index)) {
+                                    this.openCategories = this.openCategories.filter(i => i !== index);
+                                } else {
+                                    this.openCategories.push(index);
+                                }
+                                },
+
+                                toggleOption(category, option) {
+                                if (!this.activeFilters[category]) this.activeFilters[category] = new Set();
+
+                                const set = this.activeFilters[category];
+
+                                if (set.has(option)) {
+                                    set.delete(option);
+                                } else {
+                                    set.add(option);
+                                }
+
+                                this.activeFilters[category] = new Set(set);
+                                },
+
+                                isActive(category, option) {
+                                return this.activeFilters[category]?.has(option) ?? false;
+                                },
+
+                                toggleAll(category, checked) {
+                                const options = this.filterCategories.find(c => c.category === category).options;
+
+                                if (checked) {
+                                    this.activeFilters[category] = new Set(options);
+                                } else {
+                                    this.activeFilters[category] = new Set();
+                                }
+                                },
+
+                                isAllSelected(category) {
+                                const group = this.filterCategories.find(c => c.category === category);
+                                const selected = this.activeFilters[category];
+                                return selected?.size === group.options.length;
+                                }
+                            };
+                        }
+
+                    }" class="w-full h-full p-6 pt-15 overflow-y-auto">
+                    <div x-data="filtersUI()" class="space-y-4">
+
+                        <template x-for="(group, index) in filterCategories" :key="group.category">
+                            <div class="bg-white rounded shadow">
+                                <!-- Category Header -->
+                                <button
+                                    class="w-full text-left px-4 py-3 font-semibold text-gray-800 border-b flex justify-between items-center"
+                                    @click="toggleCategory(index)">
+                                    <span x-text="group.category"></span>
+                                    <svg :class="openCategories.includes(index) ? 'rotate-180' : ''"
+                                        class="w-4 h-4 transition-transform" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+
+                                <!-- Category Options -->
+                                <div x-show="openCategories.includes(index)" class="px-4 py-3 space-y-2 border-t">
+                                    <!-- ALL TOGGLE -->
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-gray-700 font-medium">All</label>
+                                        <input type="checkbox"
+                                            @change="toggleAll(group.category, $event.target.checked)"
+                                            :checked="isAllSelected(group.category)"
+                                            class="form-checkbox h-5 w-5 text-blue-600" />
+                                    </div>
+
+                                    <!-- INDIVIDUAL OPTIONS -->
+                                    <template x-for="option in group.options" :key="option">
+                                        <div class="flex items-center justify-between">
+                                            <label class="text-gray-600" x-text="option"></label>
+                                            <input type="checkbox" :checked="isActive(group.category, option)"
+                                                @change="toggleOption(group.category, option)"
+                                                class="form-checkbox h-5 w-5 text-blue-600" />
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div x-show="$store.tab === 'charts'" x-data="chartsCarousel()" x-init="init()"
+                    class="relative w-full h-full px-6 py-6 pt-15">
+                    <div class="embla overflow-hidden">
+                        <div class="embla__container flex">
+                            <!-- Mixed Chart (full width) -->
+                            <div class="embla__slide flex-none w-full md:w-2/3 p-2">
+                                <canvas id="mixedChart" class="w-full h-64"></canvas>
+                            </div>
+                            <!-- Pie Chart Slides -->
+                            <div class="embla__slide flex-none w-1/2 md:w-1/3 p-2">
+                                <canvas id="pieChart1" class="w-full h-48"></canvas>
+                            </div>
+                            <div class="embla__slide flex-none w-1/2 md:w-1/3 p-2">
+                                <canvas id="pieChart2" class="w-full h-48"></canvas>
+                            </div>
+                            <!-- More slides -->
+                        </div>
+                        <!-- Optional navigation: arrows or thumbnails -->
+                        <button @click="prev()" class="absolute left-2 top-1/2 z-10">◀</button>
+                        <button @click="next()" class="absolute right-2 top-1/2 z-10">▶</button>
+                    </div>
+                </div>
+            </div>
+
         </main>
 
-        <!-- App Entry -->
-        <script type="module" src="js/app.js"></script>
+    </div>
+
+    <script>
+        function chartsCarousel() {
+            return {
+                embla: null,
+                init() {
+                    this.embla = EmblaCarousel(this.$el.querySelector('.embla'), {
+                        loop: false,
+                        align: 'start',
+                        containScroll: 'trimSnaps',
+                        breakpoints: {
+                            '(min-width: 768px)': { dragFree: true }
+                        }
+                    });
+
+                    // Render charts now that Embla exists
+                    setTimeout(renderCharts, 0);
+                },
+                prev() {
+                    this.embla && this.embla.scrollPrev();
+                },
+                next() {
+                    this.embla && this.embla.scrollNext();
+                }
+            };
+        }
+
+        function renderCharts() {
+            // Mixed Chart
+            new Chart(document.getElementById('mixedChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [
+                        {
+                            label: 'Points',
+                            data: [12, 19, 3, 5],
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        },
+                        {
+                            label: 'Assists',
+                            data: [5, 7, 2, 8],
+                            type: 'line',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 2,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Pie Chart 1
+            new Chart(document.getElementById('pieChart1'), {
+                type: 'pie',
+                data: {
+                    labels: ['3PT', 'Mid', 'Paint'],
+                    datasets: [{
+                        label: 'Shot Distribution',
+                        data: [40, 25, 35],
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Pie Chart 2
+            new Chart(document.getElementById('pieChart2'), {
+                type: 'pie',
+                data: {
+                    labels: ['Made', 'Missed'],
+                    datasets: [{
+                        data: [70, 30],
+                        backgroundColor: ['#22c55e', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Global Alpine state for section switching
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('tab', 'resume');
+        });
+
+    </script>
 </body>
 
 </html>
