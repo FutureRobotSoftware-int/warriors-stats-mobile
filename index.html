@@ -25,7 +25,7 @@
 
         <!-- Sidebar -->
         <aside :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
-            class="fixed  z-50 w-72 h-full bg-white shadow-lg transform transition-transform duration-300 overflow-y-auto md:translate-x-0 md:block">
+            class="fixed md:relative z-50 w-72 h-full md:h-screen bg-white shadow-lg transform transition-transform duration-300 overflow-y-auto md:translate-x-0 md:block">
             <div class="flex justify-between items-center p-4 pb-0">
                 <h2 class="text-xl font-semibold text-gray-800">Players</h2>
                 <button @click="open = false" class="text-gray-500 hover:text-gray-700 md:hidden">
@@ -33,23 +33,7 @@
                 </button>
             </div>
 
-            <div class="space-y-3 p-4" x-data="{
-                players: [
-                'Gary Payton II','Jonathan Kuminga','Taran Armstrong','Brandon Podziemski','Moses Moody',
-                'Kevin Looney','Buddy Hield','Jimmy Butler III','Braxton Key','Gui Santos',
-                'Quinten Post','Draymond Green','Stephen Curry','Kevin Knox II','Trayce Jackson-Davis',
-                'Jackson Rowe','Pat Spencer'
-                ],
-                search: '',
-                get filteredPlayers() {
-                return this.players
-                    .filter(player => player.toLowerCase().includes(this.search.toLowerCase()))
-                    .map(player => ({
-                    name: player,
-                    data: player.replaceAll(' ', '-')
-                    }));
-                }
-            }">
+            <div class="space-y-3 p-4" x-data="playerSelection()">
 
                 <!-- Sticky Search Bar -->
                 <div class="sticky top-0 bg-white z-10 px-4 py-3 border-b">
@@ -106,17 +90,7 @@
             <div class="w-full h-full absolute top-0 left-0">
                 <!-- Resume -->
                 <!-- Resume Section -->
-                <div x-show="$store.tab === 'resume'" x-data="{
-                        selectedPlayer: {
-                            name: 'Stephen Curry',
-                            number: 30,
-                            position: 'Point Guard',
-                            ppg: 29.4,
-                            preferredAction: '3-Point Shot',
-                            makeMissRatio: '62 / 38',
-                            img: 'https://i.pravatar.cc/150?img=12'
-                        }
-                    }"
+                <div x-show="$store.tab === 'resume'" x-data="playerDisplay()"
                     class="w-full h-full p-6 md:pt-15 flex flex-col items-center justify-start space-y-6 overflow-hidden">
 
                     <!-- Player Image -->
@@ -156,71 +130,8 @@
                 </div>
 
                 <!-- Filters Section -->
-                <div x-show="$store.tab === 'filters'" x-data="{
-                        filtersUI() {
-                            return {
-                                filterCategories: [
-                                {
-                                    category: 'Shot Type',
-                                    options: ['3PT', 'Mid-Range', 'Layup', 'Dunk']
-                                },
-                                {
-                                    category: 'Defense',
-                                    options: ['Man', 'Zone', 'Double Team']
-                                },
-                                {
-                                    category: 'Quarter',
-                                    options: ['1st', '2nd', '3rd', '4th']
-                                }
-                                ],
-                                openCategories: [],
-                                activeFilters: {},
-
-                                toggleCategory(index) {
-                                if (this.openCategories.includes(index)) {
-                                    this.openCategories = this.openCategories.filter(i => i !== index);
-                                } else {
-                                    this.openCategories.push(index);
-                                }
-                                },
-
-                                toggleOption(category, option) {
-                                if (!this.activeFilters[category]) this.activeFilters[category] = new Set();
-
-                                const set = this.activeFilters[category];
-
-                                if (set.has(option)) {
-                                    set.delete(option);
-                                } else {
-                                    set.add(option);
-                                }
-
-                                this.activeFilters[category] = new Set(set);
-                                },
-
-                                isActive(category, option) {
-                                return this.activeFilters[category]?.has(option) ?? false;
-                                },
-
-                                toggleAll(category, checked) {
-                                const options = this.filterCategories.find(c => c.category === category).options;
-
-                                if (checked) {
-                                    this.activeFilters[category] = new Set(options);
-                                } else {
-                                    this.activeFilters[category] = new Set();
-                                }
-                                },
-
-                                isAllSelected(category) {
-                                const group = this.filterCategories.find(c => c.category === category);
-                                const selected = this.activeFilters[category];
-                                return selected?.size === group.options.length;
-                                }
-                            };
-                        }
-
-                    }" class="w-full h-full p-6 pt-15 overflow-y-auto">
+                <div x-show="$store.tab === 'filters'" x-data="filterPlayers()"
+                    class="w-full h-full p-6 pt-15 overflow-y-auto">
                     <div x-data="filtersUI()" class="space-y-4">
 
                         <template x-for="(group, index) in filterCategories" :key="group.category">
@@ -294,106 +205,10 @@
 
     </div>
 
-    <script>
-        function chartsCarousel() {
-            return {
-                embla: null,
-                init() {
-                    this.embla = EmblaCarousel(this.$el.querySelector('.embla'), {
-                        loop: false,
-                        align: 'start',
-                        containScroll: 'trimSnaps',
-                        breakpoints: {
-                            '(min-width: 768px)': { dragFree: true }
-                        }
-                    });
-
-                    // Render charts now that Embla exists
-                    setTimeout(renderCharts, 0);
-                },
-                prev() {
-                    this.embla && this.embla.scrollPrev();
-                },
-                next() {
-                    this.embla && this.embla.scrollNext();
-                }
-            };
-        }
-
-        function renderCharts() {
-            // Mixed Chart
-            new Chart(document.getElementById('mixedChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-                    datasets: [
-                        {
-                            label: 'Points',
-                            data: [12, 19, 3, 5],
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        },
-                        {
-                            label: 'Assists',
-                            data: [5, 7, 2, 8],
-                            type: 'line',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 2,
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' }
-                    },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
-            });
-
-            // Pie Chart 1
-            new Chart(document.getElementById('pieChart1'), {
-                type: 'pie',
-                data: {
-                    labels: ['3PT', 'Mid', 'Paint'],
-                    datasets: [{
-                        label: 'Shot Distribution',
-                        data: [40, 25, 35],
-                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            // Pie Chart 2
-            new Chart(document.getElementById('pieChart2'), {
-                type: 'pie',
-                data: {
-                    labels: ['Made', 'Missed'],
-                    datasets: [{
-                        data: [70, 30],
-                        backgroundColor: ['#22c55e', '#ef4444']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-        // Global Alpine state for section switching
-        document.addEventListener('alpine:init', () => {
-            Alpine.store('tab', 'resume');
-        });
-
-    </script>
+    <script src="js/charts.js"></script>
+    <script src="js/playerSelection.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/carousel.js"></script>
 </body>
 
 </html>
