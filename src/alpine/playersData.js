@@ -1,4 +1,11 @@
-function playerSelection() {
+import { parseCSV } from "../utils/csvParser.js";
+import { groupByCategory } from "../utils/filterBuilder.js";
+
+const filters = await parseCSV("../../data/filters.csv");
+
+const groupedFilters = groupByCategory(filters);
+
+export function playerSelection() {
 	return {
 		players: [
 			"Gary Payton II",
@@ -33,7 +40,7 @@ function playerSelection() {
 	};
 }
 
-function playerDisplay() {
+export function playerDisplay() {
 	return {
 		selectedPlayer: {
 			name: "Stephen Curry",
@@ -47,24 +54,17 @@ function playerDisplay() {
 	};
 }
 
-function filterPlayers() {
+export function getFilters() {
+	const filterCategories = Object.entries(groupedFilters).map(
+		([category, options]) => ({
+			category,
+			options,
+		}),
+	);
 	return {
 		filtersUI() {
 			return {
-				filterCategories: [
-					{
-						category: "Shot Type",
-						options: ["3PT", "Mid-Range", "Layup", "Dunk"],
-					},
-					{
-						category: "Defense",
-						options: ["Man", "Zone", "Double Team"],
-					},
-					{
-						category: "Quarter",
-						options: ["1st", "2nd", "3rd", "4th"],
-					},
-				],
+				filterCategories,
 				openCategories: [],
 				activeFilters: {},
 

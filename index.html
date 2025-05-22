@@ -5,12 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/embla-carousel/embla-carousel.umd.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/embla-carousel/embla-carousel.css" />
+    <link rel="stylesheet" href="src/style.css">
+
 </head>
 
 <body class="overflow-hidden bg-gray-100">
@@ -44,7 +40,7 @@
                 <!-- Loop -->
                 <template x-for="player in filteredPlayers" :key="player.data">
                     <div class="flex items-center gap-4 p-3 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer transition"
-                        onclick="loadData('${player.data}-Shotdata.csv')">
+                        :click="loadData('${player.data}-Shotdata.csv')">
                         <img src='img/user.png' alt="" class="w-10 h-10 rounded-full object-cover">
                         <p class="text-gray-800 font-medium" x-text="player.name"></p>
                     </div>
@@ -91,10 +87,10 @@
                 <!-- Resume -->
                 <!-- Resume Section -->
                 <div x-show="$store.tab === 'resume'" x-data="playerDisplay()"
-                    class="w-full h-full p-6 md:pt-15 flex flex-col items-center justify-start space-y-6 overflow-hidden">
+                    class="w-full h-full p-6 md:pt-15 flex flex-col items-center justify-start space-y-6 md:space-y-0 overflow-hidden">
 
                     <!-- Player Image -->
-                    <div class="w-32 h-32 rounded-full overflow-hidden shadow-lg">
+                    <div class="w-32 h-32 rounded-full overflow-hidden shadow-lg sm:mt-10">
                         <img :src="selectedPlayer.img" alt="Player Image" class="object-cover w-full h-full" />
                     </div>
 
@@ -130,7 +126,7 @@
                 </div>
 
                 <!-- Filters Section -->
-                <div x-show="$store.tab === 'filters'" x-data="filterPlayers()"
+                <div x-show="$store.tab === 'filters'" x-data="getFilters()"
                     class="w-full h-full p-6 pt-15 overflow-y-auto">
                     <div x-data="filtersUI()" class="space-y-4">
 
@@ -179,36 +175,58 @@
                 <!-- Charts Section -->
                 <div x-show="$store.tab === 'charts'" x-data="chartsCarousel()" x-init="init()"
                     class="relative w-full h-full px-6 py-6 pt-15">
-                    <div class="embla overflow-hidden">
+                    <!-- <div class="embla overflow-hidden">
                         <div class="embla__container flex">
-                            <!-- Mixed Chart (full width) -->
+
                             <div class="embla__slide flex-none w-full md:w-2/3 p-2">
                                 <canvas id="mixedChart" class="w-full h-64"></canvas>
                             </div>
-                            <!-- Pie Chart Slides -->
+
                             <div class="embla__slide flex-none w-1/2 md:w-1/3 p-2">
                                 <canvas id="pieChart1" class="w-full h-48"></canvas>
                             </div>
                             <div class="embla__slide flex-none w-1/2 md:w-1/3 p-2">
                                 <canvas id="pieChart2" class="w-full h-48"></canvas>
                             </div>
-                            <!-- More slides -->
+
+                        </div> -->
+
+                    <!-- Main carousel -->
+                    <div class="embla embla--main">
+                        <div class="embla__viewport">
+                            <div class="embla__container">
+                                <div class="embla__slide embla__slide--bar"><canvas id="barChart1"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="pieChart1"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="pieChart2"></canvas></div>
+                                <div class="embla__slide embla__slide--bar"><canvas id="barChart2"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="pieChart3"></canvas></div>
+                            </div>
                         </div>
-                        <!-- Optional navigation: arrows or thumbnails -->
-                        <button @click="prev()" class="absolute left-2 top-1/2 z-10">◀</button>
-                        <button @click="next()" class="absolute right-2 top-1/2 z-10">▶</button>
                     </div>
+
+                    <!-- Thumbnail carousel -->
+                    <div class="embla embla--thumb">
+                        <div class="embla__viewport">
+                            <div class="embla__container">
+                                <div class="embla__slide">1</div>
+                                <div class="embla__slide">2</div>
+                                <div class="embla__slide">3</div>
+                                <div class="embla__slide">4</div>
+                                <div class="embla__slide">5</div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
+    </div>
 
-        </main>
+    </main>
 
     </div>
 
-    <script src="js/charts.js"></script>
-    <script src="js/playerSelection.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/carousel.js"></script>
+    <script type="module" src="src/main.js"></script>
 </body>
 
 </html>

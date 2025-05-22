@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+	--color-warriors-blue: #1d428a;
+	--color-warriors-gold: #ffc72c;
+	--color-warriors-dark: #041e42;
+}
+
+.embla {
+	margin-bottom: 1rem;
+	overflow: hidden;
+}
+
+.embla__viewport {
+	overflow: hidden;
+	width: 100%;
+}
+.embla__container {
+	display: flex;
+}
+.embla__slide {
+	flex: 0 0 auto;
+	margin-right: 1rem;
+	padding-bottom: 0.5rem;
+	background: #f9f9f9;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+/* Bar chart - full width slide */
+.embla__slide--bar {
+	width: 90vw;
+	height: 65dvh;
+}
+
+/* Pie chart - smaller, show 2 per view ideally */
+.embla__slide--pie {
+	width: 45vw;
+	height: 65dvh;
+}
+
+@media (min-width: 768px) {
+	.embla__slide--bar {
+		width: 60vw;
+	}
+	.embla__slide--pie {
+		width: 30vw;
+	}
+}
+
+/* Thumbnails */
+.embla--thumb .embla__slide {
+	width: 20vw;
+	height: 60px;
+	font-size: 0.8rem;
+	background: #ccc;
+	cursor: pointer;
+}

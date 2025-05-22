@@ -1,0 +1,22 @@
+{
+  "name": "warriors-stats-mobile",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.7",
+    "alpinejs": "^3.14.9",
+    "chart.js": "^4.4.9",
+    "embla-carousel": "^8.6.0",
+    "papaparse": "^5.5.3",
+    "tailwindcss": "^4.1.7"
+  }
+}
