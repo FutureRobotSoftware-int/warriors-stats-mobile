@@ -1,90 +1,268 @@
 import Chart from "chart.js/auto";
+import { parseCSV } from "../utils/csvParser.js";
+import { flattenFilterStore } from "../utils/filterHelper.js";
 
-// Múltiples instancias
-let charts = {};
+const pieCharts = {};
+const thumbCharts = {};
+let chartInstance = null;
+let rawData = [];
 
-export function renderCharts() {
-	// Destruir todos los gráficos existentes si ya existen
-	for (const key in charts) {
-		charts[key].destroy();
-	}
+// =================== UTILITY ===================
+function getFilteredData(data, filters) {
+	return data.filter((row) =>
+		Object.entries(filters).every(
+			([key, values]) => !values.length || values.includes(row[key]),
+		),
+	);
+}
 
-	// Reiniciar
-	charts = {};
+function groupByOffensiveActionWithPPP(data) {
+	const grouped = {};
+	// biome-ignore lint/complexity/useLiteralKeys: <explanation>
+	// biome-ignore lint/complexity/noForEach: <explanation>
+	data.forEach(({ ["Offensive Action"]: action, PTS }) => {
+		const pts = Number(PTS);
+		// biome-ignore lint/suspicious/noGlobalIsNan: <explanation>
+		if (!action || isNaN(pts)) return;
 
-	const ctxMixed = document.getElementById("mixedChart");
-	if (ctxMixed) {
-		charts.mixedChart = new Chart(ctxMixed, {
-			type: "bar",
-			data: {
-				labels: ["Q1", "Q2", "Q3", "Q4"],
-				datasets: [
-					{
-						label: "Points",
-						data: [12, 19, 3, 5],
-						backgroundColor: "rgba(54, 162, 235, 0.6)",
-					},
-					{
-						label: "Assists",
-						data: [5, 7, 2, 8],
-						type: "line",
-						borderColor: "rgba(255, 99, 132, 1)",
-						borderWidth: 2,
-						fill: false,
-					},
-				],
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				plugins: {
-					legend: { position: "top" },
+		if (!grouped[action]) grouped[action] = { totalShots: 0, totalPoints: 0 };
+		grouped[action].totalShots++;
+		grouped[action].totalPoints += pts;
+	});
+
+	const labels = Object.keys(grouped);
+	const totals = labels.map((action) => grouped[action].totalShots);
+	const ppps = labels.map((action) =>
+		(grouped[action].totalPoints / grouped[action].totalShots).toFixed(2),
+	);
+
+	return { labels, totals, ppps };
+}
+
+// =================== CHART RENDERERS ===================
+function renderMixedChart(labels, total, ppps) {
+	const canvas = document.getElementById("barChart1");
+	if (!canvas) return;
+	const ctx = canvas.getContext("2d");
+	if (chartInstance) chartInstance.destroy();
+
+	chartInstance = new Chart(ctx, {
+		type: "bar",
+		data: {
+			labels,
+			datasets: [
+				{
+					type: "bar",
+					label: "Possessions",
+					data: total,
+					backgroundColor: "rgba(255, 195, 0, 0.6)",
+					yAxisID: "y",
+					order: 2,
 				},
-				scales: {
-					y: { beginAtZero: true },
+				{
+					type: "line",
+					label: "PPP",
+					data: ppps,
+					backgroundColor: "rgba(51, 168, 255, 0.6)",
+					borderColor: "rgba(51, 168, 255, 1)",
+					fill: false,
+					yAxisID: "y1",
+					order: 1,
+				},
+			],
+		},
+		options: {
+			responsive: true,
+			interaction: {
+				mode: "index",
+				intersect: false,
+			},
+			scales: {
+				y: {
+					beginAtZero: true,
+					title: { display: true, text: "Total Plays" },
+				},
+				y1: {
+					beginAtZero: true,
+					suggestedMax: 3.5,
+					position: "right",
+					grid: { drawOnChartArea: false },
+					title: { display: true, text: "PPP" },
 				},
 			},
-		});
+		},
+	});
+}
+
+function renderPieChart(canvasId, labels, values, title) {
+	const canvas = document.getElementById(canvasId);
+	if (!canvas) return;
+	const ctx = canvas.getContext("2d");
+	if (pieCharts[canvasId]) pieCharts[canvasId].destroy();
+
+	pieCharts[canvasId] = new Chart(ctx, {
+		type: "pie",
+		data: {
+			labels,
+			datasets: [
+				{
+					data: values,
+					backgroundColor: [
+						"#4bc0c0",
+						"#ff6384",
+						"#ffcd56",
+						"#36a2eb",
+						"#9966ff",
+						"#ff9f40",
+						"#c9cbcf",
+						"#8bcdcd",
+					],
+				},
+			],
+		},
+		options: {
+			responsive: true,
+			plugins: {
+				title: { display: true, text: title },
+				tooltip: {
+					callbacks: {
+						label: ({ parsed, dataset }) => {
+							const total = dataset.data.reduce((a, b) => a + b, 0);
+							const percentage = ((parsed / total) * 100).toFixed(1);
+							return `${parsed} (${percentage}%)`;
+						},
+					},
+				},
+			},
+		},
+	});
+}
+
+function renderThumbnailChart(canvasId, type, labels, data, title = "") {
+	const canvas = document.getElementById(canvasId);
+	if (!canvas) return;
+
+	const ctx = canvas.getContext("2d");
+
+	// 💥 Destruir si ya hay una instancia previa
+	if (thumbCharts[canvasId]) {
+		thumbCharts[canvasId].destroy();
 	}
 
-	const ctxPie1 = document.getElementById("pieChart1");
-	if (ctxPie1) {
-		charts.pieChart1 = new Chart(ctxPie1, {
-			type: "pie",
-			data: {
-				labels: ["3PT", "Mid", "Paint"],
-				datasets: [
-					{
-						label: "Shot Distribution",
-						data: [40, 25, 35],
-						backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"],
-					},
-				],
+	thumbCharts[canvasId] = new Chart(ctx, {
+		type,
+		data: {
+			labels,
+			datasets: [
+				{
+					data,
+					backgroundColor: "#041e42",
+				},
+			],
+		},
+		options: {
+			responsive: true,
+			animation: false,
+			plugins: {
+				legend: { display: false },
+				title: {
+					display: !!title,
+					text: title,
+					font: { size: 10 },
+				},
+				tooltip: { enabled: false },
 			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
+			scales: {
+				y: { display: false },
+				x: { display: false },
 			},
-		});
-	}
+		},
+	});
+}
 
-	const ctxPie2 = document.getElementById("pieChart2");
-	if (ctxPie2) {
-		charts.pieChart2 = new Chart(ctxPie2, {
-			type: "pie",
-			data: {
-				labels: ["Made", "Missed"],
-				datasets: [
-					{
-						data: [70, 30],
-						backgroundColor: ["#22c55e", "#ef4444"],
-					},
-				],
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-			},
+function updateAllPieCharts(filteredData) {
+	const configs = [
+		{
+			field: "Defender Distance",
+			title: "Defender Distance",
+			canvasId: "pieDD",
+			thumbId: "thumbPieDD",
+		},
+		{
+			field: "Make/Miss",
+			title: "FG%",
+			canvasId: "pieFG",
+			thumbId: "thumbPieFG",
+		},
+		{
+			field: "Hop/1-2",
+			title: "Footwork",
+			canvasId: "pieFoot",
+			thumbId: "thumbPieFoot",
+		},
+		{
+			field: "Area",
+			title: "Shot Area",
+			canvasId: "pieArea",
+			thumbId: "thumbPieArea",
+		},
+		{
+			field: "Offensive Action",
+			title: "Action",
+			canvasId: "pieAction",
+			thumbId: "thumbPieAction",
+		},
+		{
+			field: "Pass Direction",
+			title: "Pass Direction",
+			canvasId: "piePass",
+			thumbId: "thumbPiePass",
+		},
+		{
+			field: "Player Direction",
+			title: "Player Direction",
+			canvasId: "piePlay",
+			thumbId: "thumbPiePlay",
+		},
+		{
+			field: "Off Dribble Hand",
+			title: "Off Dribble Hand",
+			canvasId: "pieOff",
+			thumbId: "thumbPieOff",
+		},
+	];
+
+	configs.forEach(({ field, title, canvasId, thumbId }) => {
+		const countMap = {};
+		filteredData.forEach((row) => {
+			const key = row[field];
+			if (key) countMap[key] = (countMap[key] || 0) + 1;
 		});
-	}
+
+		const labels = Object.keys(countMap);
+		const values = labels.map((k) => countMap[k]);
+
+		renderPieChart(canvasId, labels, values, title);
+		if (thumbId) {
+			renderThumbnailChart(thumbId, "pie", labels, values);
+		}
+	});
+}
+
+// =================== ENTRY POINT ===================
+export async function renderCharts(
+	source = "../data/Buddy-Hield-Shotdata.csv",
+) {
+	rawData = await parseCSV(source);
+
+	const rawFilters = Alpine.store("filters");
+	const filters = flattenFilterStore(rawFilters);
+
+	const filtered = getFilteredData(rawData, filters);
+
+	const { labels, totals, ppps } = groupByOffensiveActionWithPPP(filtered);
+
+	updateAllPieCharts(filtered);
+	renderMixedChart(labels, totals, ppps);
+	renderThumbnailChart("thumbBarChart1", "bar", labels, totals);
 }

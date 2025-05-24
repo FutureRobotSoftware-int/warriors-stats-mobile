@@ -54,6 +54,8 @@ export function playerDisplay() {
 	};
 }
 
+import Alpine from "alpinejs";
+
 export function getFilters() {
 	const filterCategories = Object.entries(groupedFilters).map(
 		([category, options]) => ({
@@ -61,12 +63,13 @@ export function getFilters() {
 			options,
 		}),
 	);
+
 	return {
 		filtersUI() {
 			return {
 				filterCategories,
 				openCategories: [],
-				activeFilters: {},
+				activeFilters: Alpine.store("filters"), // 🔗 Referencia directa al store
 
 				toggleCategory(index) {
 					if (this.openCategories.includes(index)) {
@@ -90,6 +93,7 @@ export function getFilters() {
 						set.add(option);
 					}
 
+					// 🔁 Refrescar el set en el store para reactividad
 					this.activeFilters[category] = new Set(set);
 				},
 
@@ -102,11 +106,7 @@ export function getFilters() {
 						(c) => c.category === category,
 					).options;
 
-					if (checked) {
-						this.activeFilters[category] = new Set(options);
-					} else {
-						this.activeFilters[category] = new Set();
-					}
+					this.activeFilters[category] = checked ? new Set(options) : new Set();
 				},
 
 				isAllSelected(category) {

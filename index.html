@@ -40,7 +40,7 @@
                 <!-- Loop -->
                 <template x-for="player in filteredPlayers" :key="player.data">
                     <div class="flex items-center gap-4 p-3 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer transition"
-                        :click="loadData('${player.data}-Shotdata.csv')">
+                        @click="window.renderCharts(`data/${player.data}-Shotdata.csv`)">
                         <img src='img/user.png' alt="" class="w-10 h-10 rounded-full object-cover">
                         <p class="text-gray-800 font-medium" x-text="player.name"></p>
                     </div>
@@ -90,7 +90,7 @@
                     class="w-full h-full p-6 md:pt-15 flex flex-col items-center justify-start space-y-6 md:space-y-0 overflow-hidden">
 
                     <!-- Player Image -->
-                    <div class="w-32 h-32 rounded-full overflow-hidden shadow-lg sm:mt-10">
+                    <div class="w-32 sm:w-auto h-32 rounded-full overflow-hidden shadow-lg sm:mt-10 sm:mb-1">
                         <img :src="selectedPlayer.img" alt="Player Image" class="object-cover w-full h-full" />
                     </div>
 
@@ -128,7 +128,7 @@
                 <!-- Filters Section -->
                 <div x-show="$store.tab === 'filters'" x-data="getFilters()"
                     class="w-full h-full p-6 pt-15 overflow-y-auto">
-                    <div x-data="filtersUI()" class="space-y-4">
+                    <div x-data="filtersUI()" class="grid grid-cols-2 gap-4">
 
                         <template x-for="(group, index) in filterCategories" :key="group.category">
                             <div class="bg-white rounded shadow">
@@ -173,33 +173,21 @@
                 </div>
 
                 <!-- Charts Section -->
-                <div x-show="$store.tab === 'charts'" x-data="chartsCarousel()" x-init="init()"
-                    class="relative w-full h-full px-6 py-6 pt-15">
-                    <!-- <div class="embla overflow-hidden">
-                        <div class="embla__container flex">
-
-                            <div class="embla__slide flex-none w-full md:w-2/3 p-2">
-                                <canvas id="mixedChart" class="w-full h-64"></canvas>
-                            </div>
-
-                            <div class="embla__slide flex-none w-1/2 md:w-1/3 p-2">
-                                <canvas id="pieChart1" class="w-full h-48"></canvas>
-                            </div>
-                            <div class="embla__slide flex-none w-1/2 md:w-1/3 p-2">
-                                <canvas id="pieChart2" class="w-full h-48"></canvas>
-                            </div>
-
-                        </div> -->
+                <div x-show="$store.tab === 'charts'" class="relative w-full h-full px-6 py-6 pt-15">
 
                     <!-- Main carousel -->
                     <div class="embla embla--main">
                         <div class="embla__viewport">
                             <div class="embla__container">
                                 <div class="embla__slide embla__slide--bar"><canvas id="barChart1"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="pieChart1"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="pieChart2"></canvas></div>
-                                <div class="embla__slide embla__slide--bar"><canvas id="barChart2"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="pieChart3"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="pieDD"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="pieFG"></canvas></div>
+                                <div class="embla__slide embla__slide--bar"><canvas id="pieFoot"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="pieArea"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="pieAction"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="piePass"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="piePlay"></canvas></div>
+                                <div class="embla__slide embla__slide--pie"><canvas id="pieOff"></canvas></div>
                             </div>
                         </div>
                     </div>
@@ -208,11 +196,15 @@
                     <div class="embla embla--thumb">
                         <div class="embla__viewport">
                             <div class="embla__container">
-                                <div class="embla__slide">1</div>
-                                <div class="embla__slide">2</div>
-                                <div class="embla__slide">3</div>
-                                <div class="embla__slide">4</div>
-                                <div class="embla__slide">5</div>
+                                <div class="embla__slide"><canvas id="thumbBarChart1"></canvas></div>
+                                <div class="embla__slide"><canvas id="thumbPieDD"></canvas></div>
+                                <div class="embla__slide"><canvas id="thumbPieFG"></canvas></div>
+                                <div class="embla__slide"><canvas id="thumbPieFoot"></canvas></div>
+                                <div class="embla__slide"><canvas id="thumbPieArea"></canvas></div>
+                                <div class="embla__slide"><canvas id="thumbPieAction"></canvas></div>
+                                <div class="embla__slide"><canvas id="thumbPiePass"></canvas></div>
+                                <div class="embla__slide"><canvas id="thumbPiePlay"></canvas></div>
+                                <div class="embla__slide"><canvas id="thumbPieOff"></canvas></div>
                             </div>
                         </div>
                     </div>
