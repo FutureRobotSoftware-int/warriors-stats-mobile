@@ -133,6 +133,12 @@ function renderPieChart(canvasId, labels, values, title) {
 						},
 					},
 				},
+				legend: {
+					position: "left",
+					labels: {
+						boxWidth: 20,
+					},
+				},
 			},
 		},
 	});
@@ -156,7 +162,8 @@ function renderThumbnailChart(canvasId, type, labels, data, title = "") {
 			datasets: [
 				{
 					data,
-					backgroundColor: "#041e42",
+					backgroundColor: "#FFF",
+					borderColor: "#041e42",
 				},
 			],
 		},

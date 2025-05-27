@@ -15,13 +15,13 @@
 
         <!-- Left Edge Toggle Button -->
         <button x-show="!open" @click="open = true" x-transition
-            class="md:hidden fixed top-4 left-0 z-40 w-10 h-10 bg-blue-600 bg-opacity-70 text-white text-xl rounded-r-md shadow opacity-75 transition duration-200 flex items-center justify-center">
+            class="lg:hidden fixed top-4 left-0 z-40 w-10 h-10 bg-blue-600 bg-opacity-70 text-white text-xl rounded-r-md shadow opacity-75 transition duration-200 flex items-center justify-center">
             <img class="w-4 h-4" src="img/right-arrow.png">
         </button>
 
         <!-- Sidebar -->
         <aside :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
-            class="fixed md:relative z-50 w-72 h-full md:h-screen bg-white shadow-lg transform transition-transform duration-300 overflow-y-auto md:translate-x-0 md:block">
+            class="fixed lg:relative z-50 w-72 h-full lg:h-screen bg-white shadow-lg transform transition-transform duration-300 overflow-y-auto lg:translate-x-0 md:block">
             <div class="flex justify-between items-center p-4 pb-0">
                 <h2 class="text-xl font-semibold text-gray-800">Players</h2>
                 <button @click="open = false" class="text-gray-500 hover:text-gray-700 md:hidden">
@@ -38,10 +38,10 @@
                 </div>
 
                 <!-- Loop -->
-                <template x-for="player in filteredPlayers" :key="player.data">
+                <template x-for="player in filteredPlayers" :key="player.name">
                     <div class="flex items-center gap-4 p-3 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer transition"
-                        @click="window.renderCharts(`data/${player.data}-Shotdata.csv`)">
-                        <img src='img/user.png' alt="" class="w-10 h-10 rounded-full object-cover">
+                        @click="window.renderCharts(`data/${player.data}-Shotdata.csv`); $store.selected = player.name">
+                        <!-- <img src='img/user.png' alt="" class="w-10 h-10 rounded-full object-cover"> -->
                         <p class="text-gray-800 font-medium" x-text="player.name"></p>
                     </div>
                 </template>
@@ -60,9 +60,7 @@
         </div>
 
         <!-- Main content area -->
-        <main x-data x-init="$watch('$store.tab', value => {
-                if (value === 'charts') renderCharts();
-            })" class="flex-1 relative overflow-hidden">
+        <main x-data x-init="$watch('$store.tab')" class="flex-1 relative overflow-hidden">
 
             <!-- Floating Nav-Dock -->
             <div class="absolute top-4 left-1/2 -translate-x-1/2 z-20">
@@ -86,11 +84,11 @@
             <div class="w-full h-full absolute top-0 left-0">
                 <!-- Resume -->
                 <!-- Resume Section -->
-                <div x-show="$store.tab === 'resume'" x-data="playerDisplay()"
+                <div x-show="$store.tab === 'resume'" x-data="playerDisplay()" x-init="init()" x-effect="updatePlayer()"
                     class="w-full h-full p-6 md:pt-15 flex flex-col items-center justify-start space-y-6 md:space-y-0 overflow-hidden">
 
                     <!-- Player Image -->
-                    <div class="w-32 sm:w-auto h-32 rounded-full overflow-hidden shadow-lg sm:mt-10 sm:mb-1">
+                    <div class="w-32 sm:w-auto h-32 rounded-full overflow-hidden shadow-lg sm:mb-1">
                         <img :src="selectedPlayer.img" alt="Player Image" class="object-cover w-full h-full" />
                     </div>
 
@@ -128,7 +126,7 @@
                 <!-- Filters Section -->
                 <div x-show="$store.tab === 'filters'" x-data="getFilters()"
                     class="w-full h-full p-6 pt-15 overflow-y-auto">
-                    <div x-data="filtersUI()" class="grid grid-cols-2 gap-4">
+                    <div x-data="filtersUI()" class="grid grid-cols-4 gap-4">
 
                         <template x-for="(group, index) in filterCategories" :key="group.category">
                             <div class="bg-white rounded shadow">
@@ -179,32 +177,60 @@
                     <div class="embla embla--main">
                         <div class="embla__viewport">
                             <div class="embla__container">
-                                <div class="embla__slide embla__slide--bar"><canvas id="barChart1"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="pieDD"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="pieFG"></canvas></div>
-                                <div class="embla__slide embla__slide--bar"><canvas id="pieFoot"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="pieArea"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="pieAction"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="piePass"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="piePlay"></canvas></div>
-                                <div class="embla__slide embla__slide--pie"><canvas id="pieOff"></canvas></div>
+                                <div class="embla__slide embla__slide--bar">
+                                    <canvas id="barChart1"></canvas>
+                                </div>
+                                <div class="embla__slide embla__slide--pie">
+                                    <canvas id="pieDD"></canvas>
+                                </div>
+                                <div class="embla__slide embla__slide--pie">
+                                    <canvas id="pieFG"></canvas>
+                                </div>
+                                <div class="embla__slide embla__slide--pie">
+                                    <canvas id="pieFoot"></canvas>
+                                </div>
+                                <div class="embla__slide embla__slide--bar wide">
+                                    <canvas id="pieArea"></canvas>
+                                </div>
+                                <div class="embla__slide embla__slide--bar wide">
+                                    <canvas id="pieAction"></canvas>
+                                </div>
+                                <div class="embla__slide embla__slide--pie">
+                                    <canvas id="piePass"></canvas>
+                                </div>
+                                <div class="embla__slide embla__slide--pie">
+                                    <canvas id="piePlay"></canvas>
+                                </div>
+                                <div class="embla__slide embla__slide--bar wide">
+                                    <canvas id="pieOff"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Thumbnail carousel -->
-                    <div class="embla embla--thumb">
+                    <div class="embla embla--thumb" x-data="renderCharts()">
                         <div class="embla__viewport">
                             <div class="embla__container">
-                                <div class="embla__slide"><canvas id="thumbBarChart1"></canvas></div>
-                                <div class="embla__slide"><canvas id="thumbPieDD"></canvas></div>
-                                <div class="embla__slide"><canvas id="thumbPieFG"></canvas></div>
-                                <div class="embla__slide"><canvas id="thumbPieFoot"></canvas></div>
-                                <div class="embla__slide"><canvas id="thumbPieArea"></canvas></div>
-                                <div class="embla__slide"><canvas id="thumbPieAction"></canvas></div>
-                                <div class="embla__slide"><canvas id="thumbPiePass"></canvas></div>
-                                <div class="embla__slide"><canvas id="thumbPiePlay"></canvas></div>
-                                <div class="embla__slide"><canvas id="thumbPieOff"></canvas></div>
+                                <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas
+                                        id="thumbBarChart1"></canvas>
+                                </div>
+                                <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas
+                                        id="thumbPieDD"></canvas></div>
+                                <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas
+                                        id="thumbPieFG"></canvas></div>
+                                <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas
+                                        id="thumbPieFoot"></canvas></div>
+                                <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas
+                                        id="thumbPieArea"></canvas></div>
+                                <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas
+                                        id="thumbPieAction"></canvas></div>
+                                <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas
+                                        id="thumbPiePass"></canvas></div>
+                                <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas
+                                        id="thumbPiePlay"></canvas></div>
+                                <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas
+                                        id="thumbPieOff"></canvas></div>
                             </div>
                         </div>
                     </div>

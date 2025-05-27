@@ -1,31 +1,18 @@
 import { parseCSV } from "../utils/csvParser.js";
 import { groupByCategory } from "../utils/filterBuilder.js";
+import Alpine from "alpinejs";
 
 const filters = await parseCSV("../../data/filters.csv");
 
 const groupedFilters = groupByCategory(filters);
 
+const playerData = await parseCSV("../../data/players.csv");
+
+const name = playerData.map((row) => row.Player).filter(Boolean);
+
 export function playerSelection() {
 	return {
-		players: [
-			"Gary Payton II",
-			"Jonathan Kuminga",
-			"Taran Armstrong",
-			"Brandon Podziemski",
-			"Moses Moody",
-			"Kevin Looney",
-			"Buddy Hield",
-			"Jimmy Butler III",
-			"Braxton Key",
-			"Gui Santos",
-			"Quinten Post",
-			"Draymond Green",
-			"Stephen Curry",
-			"Kevin Knox II",
-			"Trayce Jackson-Davis",
-			"Jackson Rowe",
-			"Pat Spencer",
-		],
+		players: name,
 		search: "",
 		get filteredPlayers() {
 			return this.players
@@ -40,21 +27,33 @@ export function playerSelection() {
 	};
 }
 
-export function playerDisplay() {
+export function playerDisplay(initialPlayer = "Moses Moody") {
 	return {
-		selectedPlayer: {
-			name: "Stephen Curry",
-			number: 30,
-			position: "Point Guard",
-			ppg: 29.4,
-			preferredAction: "3-Point Shot",
-			makeMissRatio: "62 / 38",
-			img: "https://i.pravatar.cc/150?img=12",
+		selectedPlayer: {},
+
+		updatePlayer() {
+			const selectedName = Alpine.store("selected") || initialPlayer;
+			const playerResume = playerData.find(
+				(row) => row.Player === selectedName,
+			);
+			if (playerResume) {
+				this.selectedPlayer = {
+					name: playerResume.Player,
+					number: playerResume.Number,
+					position: playerResume.Position,
+					ppg: 29.4, // Asigna valores reales si los tienes
+					preferredAction: "3-Point Shot",
+					makeMissRatio: "62 / 38",
+					img: playerResume.Image,
+				};
+			}
+		},
+
+		init() {
+			this.updatePlayer();
 		},
 	};
 }
-
-import Alpine from "alpinejs";
 
 export function getFilters() {
 	const filterCategories = Object.entries(groupedFilters).map(
@@ -69,7 +68,7 @@ export function getFilters() {
 			return {
 				filterCategories,
 				openCategories: [],
-				activeFilters: Alpine.store("filters"), // 🔗 Referencia directa al store
+				activeFilters: Alpine.store("filters"), // Store reference
 
 				toggleCategory(index) {
 					if (this.openCategories.includes(index)) {
@@ -93,7 +92,7 @@ export function getFilters() {
 						set.add(option);
 					}
 
-					// 🔁 Refrescar el set en el store para reactividad
+					// Refresh
 					this.activeFilters[category] = new Set(set);
 				},
 

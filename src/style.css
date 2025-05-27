@@ -40,6 +40,10 @@
 	height: 65dvh;
 }
 
+.wide canvas {
+	width: 100%;
+}
+
 @media (min-width: 768px) {
 	.embla__slide--bar {
 		width: 60vw;
@@ -54,7 +58,7 @@
 	width: 10vw;
 	height: 60px;
 	padding: 0.25rem;
-	background: #f0f0f0;
+	background: #041e42;
 	display: flex;
 	align-items: center;
 	justify-content: center;

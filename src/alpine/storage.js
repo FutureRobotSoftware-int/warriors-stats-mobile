@@ -4,4 +4,5 @@ import Alpine from "alpinejs";
 document.addEventListener("alpine:init", () => {
 	Alpine.store("tab", "resume");
 	Alpine.store("filters", {});
+	Alpine.store("selected", "Buddy Hield");
 });
