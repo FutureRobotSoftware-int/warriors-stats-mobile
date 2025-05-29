@@ -40,7 +40,7 @@
                 <!-- Loop -->
                 <template x-for="player in filteredPlayers" :key="player.name">
                     <div class="flex items-center gap-4 p-3 bg-gray-100 rounded hover:bg-gray-200 cursor-pointer transition"
-                        @click="window.renderCharts(`data/${player.data}-Shotdata.csv`); $store.selected = player.name">
+                        @click="selectPlayer(player)">
                         <!-- <img src='img/user.png' alt="" class="w-10 h-10 rounded-full object-cover"> -->
                         <p class="text-gray-800 font-medium" x-text="player.name"></p>
                     </div>
@@ -60,7 +60,7 @@
         </div>
 
         <!-- Main content area -->
-        <main x-data x-init="$watch('$store.tab')" class="flex-1 relative overflow-hidden">
+        <main x-data class="flex-1 relative overflow-hidden">
 
             <!-- Floating Nav-Dock -->
             <div class="absolute top-4 left-1/2 -translate-x-1/2 z-20">
@@ -106,8 +106,8 @@
                         </div>
 
                         <div class="bg-white p-4 rounded shadow text-center">
-                            <p class="font-semibold text-gray-600">PPG</p>
-                            <p class="text-gray-800" x-text="selectedPlayer.ppg"></p>
+                            <p class="font-semibold text-gray-600">Preferred Area</p>
+                            <p class="text-gray-800" x-text="selectedPlayer.preferredArea"></p>
                         </div>
 
                         <div class="bg-white p-4 rounded shadow text-center">
@@ -124,9 +124,8 @@
                 </div>
 
                 <!-- Filters Section -->
-                <div x-show="$store.tab === 'filters'" x-data="getFilters()"
-                    class="w-full h-full p-6 pt-15 overflow-y-auto">
-                    <div x-data="filtersUI()" class="grid grid-cols-4 gap-4">
+                <div x-show="$store.tab === 'filters'" class="w-full h-full p-6 pt-15 overflow-y-auto">
+                    <div x-data="filterComponent().filtersUI()" class="grid grid-cols-4 gap-4">
 
                         <template x-for="(group, index) in filterCategories" :key="group.category">
                             <div class="bg-white rounded shadow">
@@ -209,7 +208,7 @@
                     </div>
 
                     <!-- Thumbnail carousel -->
-                    <div class="embla embla--thumb" x-data="renderCharts()">
+                    <div class="embla embla--thumb">
                         <div class="embla__viewport">
                             <div class="embla__container">
                                 <div class="embla__slide border-2 border-(--color-warriors-gold)"><canvas

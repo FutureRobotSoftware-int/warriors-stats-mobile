@@ -1,5 +1,4 @@
 import EmblaCarousel from "embla-carousel";
-import { renderCharts } from "../charts/charts.js";
 
 const mainEmbla = EmblaCarousel(
 	document.querySelector(".embla--main .embla__viewport"),
