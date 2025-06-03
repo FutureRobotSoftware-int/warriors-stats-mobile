@@ -71,7 +71,7 @@ export function renderMixedChart(labels, total, ppps) {
  * @param {string[]} labels
  * @param {number[]} values
  */
-export function renderPieChart(containerId, labels, values, title) {
+export function renderPieChart(containerId, labels, values, title, fgPercentages = []) {
 	const canvas = document.getElementById(containerId);
 	if (!canvas) return;
 	const ctx = canvas.getContext("2d");
@@ -105,10 +105,11 @@ export function renderPieChart(containerId, labels, values, title) {
 				title: { display: true, text: title },
 				tooltip: {
 					callbacks: {
-						label: ({ parsed, dataset }) => {
-							const total = dataset.data.reduce((a, b) => a + b, 0);
-							const percentage = ((parsed / total) * 100).toFixed(1);
-							return `${parsed} (${percentage}%)`;
+						label: ({ label, parsed, dataset, dataIndex }) => {
+						const total = dataset.data.reduce((a, b) => a + b, 0);
+						const percentage = ((parsed / total) * 100).toFixed(1);
+						const fg = fgPercentages[dataIndex] || "0.0";
+						return [`Frequency: ${percentage}%`, `FG%: ${fg}%`];
 						},
 					},
 				},

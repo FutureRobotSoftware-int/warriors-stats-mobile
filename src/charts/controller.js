@@ -65,21 +65,41 @@ export function updateAllPieCharts(filteredData) {
 
 	// biome-ignore lint/complexity/noForEach: <explanation>
 	configs.forEach(({ field, canvasId, thumbId, title }) => {
-		const countMap = {};
-		// biome-ignore lint/complexity/noForEach: <explanation>
-		filteredData.forEach((row) => {
-			const key = row[field];
-			if (key) countMap[key] = (countMap[key] || 0) + 1;
-		});
+    const countMap = {};
+    const makeCounts = {};
+    const attemptCounts = {};
 
-		const labels = Object.keys(countMap);
-		const values = labels.map((k) => countMap[k]);
+    filteredData.forEach((row) => {
+      const key = row[field];
+      if (!key) return;
 
-		renderPieChart(canvasId, labels, values, title);
-		if (thumbId) {
-			renderThumbChart(thumbId, "pie", labels, values);
-		}
-	});
+      // Contar frecuencia
+      countMap[key] = (countMap[key] || 0) + 1;
+
+      // Contar makes y attempts solo si existe "Make/Miss"
+      const makeMiss = row["Make/Miss"];
+      if (makeMiss) {
+        attemptCounts[key] = (attemptCounts[key] || 0) + 1;
+        if (makeMiss === "Make") {
+          makeCounts[key] = (makeCounts[key] || 0) + 1;
+        }
+      }
+    });
+
+    const labels = Object.keys(countMap);
+    const values = labels.map((k) => countMap[k]);
+    const fgPercentages = labels.map((k) => {
+      const makes = makeCounts[k] || 0;
+      const attempts = attemptCounts[k] || 0;
+      return attempts > 0 ? ((makes / attempts) * 100).toFixed(1) : "0.0";
+    });
+
+    // Pasa los fgPercentages al renderizador
+    renderPieChart(canvasId, labels, values, title, fgPercentages);
+    if (thumbId) {
+      renderThumbChart(thumbId, "pie", labels, values);
+    }
+  });
 }
 
 /**
