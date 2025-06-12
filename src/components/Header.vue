@@ -7,17 +7,17 @@
             <div class="grow mx-4">
                 <select name="" id=""
                     class="select select-lg rounded-full border-base-100 bg-primary border-2 focus:outline-base-100">
-                    <option>Buddy Hield</option>
-                    <option>Moses Moody</option>
-                    <option>Brain</option>
+                    <option class="lg:text-sm">Buddy Hield</option>
+                    <option class="lg:text-sm">Moses Moody</option>
+                    <option class="lg:text-sm">Brandon Podziemski</option>
                 </select>
             </div>
             <div class="mx-4">
                 <select name="" id=""
                     class="select select-lg rounded-full border-base-100 bg-primary w-fit border-2 focus:outline-base-100">
-                    <option>2024-2025</option>
-                    <option>2023-2025</option>
-                    <option>All time</option>
+                    <option class="lg:text-sm">2024-2025</option>
+                    <option class="lg:text-sm">2023-2025</option>
+                    <option class="lg:text-sm">All time</option>
                 </select>
             </div>
         </div>
