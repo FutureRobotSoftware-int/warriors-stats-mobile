@@ -9,23 +9,23 @@
                     <div class="collapse-content text-sm">
                         <div class="flex flex-col">
                             <label class="label mb-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Left Corner
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Left Wing
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Top
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Right Wing
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Right Corner
                             </label>
                         </div>
@@ -37,11 +37,11 @@
                     <div class="collapse-content text-sm">
                         <div class="flex flex-col">
                             <label class="label mb-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Left
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Right
                             </label>
                         </div>
@@ -53,11 +53,11 @@
                     <div class="collapse-content text-sm">
                         <div class="flex flex-col">
                             <label class="label mb-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Left
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Right
                             </label>
                         </div>
@@ -69,11 +69,11 @@
                     <div class="collapse-content text-sm">
                         <div class="flex flex-col">
                             <label class="label mb-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Left
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Right
                             </label>
                         </div>
@@ -85,11 +85,11 @@
                     <div class="collapse-content text-sm">
                         <div class="flex flex-col">
                             <label class="label mb-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 DHO
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Lift
                             </label>
                         </div>
@@ -101,15 +101,15 @@
                     <div class="collapse-content text-sm">
                         <div class="flex flex-col">
                             <label class="label mb-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Hop
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 1/2 Left
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 1/2 Right
                             </label>
                         </div>
@@ -121,11 +121,11 @@
                     <div class="collapse-content text-sm">
                         <div class="flex flex-col">
                             <label class="label mb-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Close
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Open
                             </label>
                         </div>
@@ -137,11 +137,11 @@
                     <div class="collapse-content text-sm">
                         <div class="flex flex-col">
                             <label class="label mb-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Make
                             </label>
                             <label class="label my-1">
-                                <input type="checkbox" checked="checked" class="toggle" />
+                                <input type="checkbox" :checked="true" class="toggle" />
                                 Miss
                             </label>
                         </div>
