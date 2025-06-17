@@ -10,8 +10,9 @@ const [emblaRef] = emblaCarouselVue()
         <div class="embla__container">
             <SmallCard title="Overall FG%" stat="32%" />
             <SmallCard title="Overall PPP" stat="1.3" />
-            <SmallCard title="Preferred Off Dribble Hand" stat="LEFT" />
-            <SmallCard title="Preferred Hop/1-2" stat="HOP" />
+            <SmallCard title="Preferred Off. Dribble Hand" stat="LEFT" />
+            <SmallCard title="Preferred Footwork" stat="HOP" />
+            <SmallCard title="Preferred Off." stat="HOP" />
             <SmallCard title="Most common Defender Distance" stat="CLOSE" />
         </div>
     </div>
