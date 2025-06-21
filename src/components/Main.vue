@@ -3,17 +3,23 @@
         <Carousel />
         <div class="divider divider-neutral"></div>
         <div class="flex flex-wrap justify-between m-4">
-            <FlippableCard title="3-PTS Shot Data" class="mb-4 basis-128" />
-            <FlippableCard title="Stats" class="mb-4 basis-72 xl:basis-96" />
-            <FlippableCard title="Stats" class="mb-4 basis-72 xl:basis-72" />
-            <FlippableCard title="Stats" class="mb-4 basis-96 xl:basis-72" />
-            <FlippableCard title="Stats" class="mb-4 basis-96 xl:basis-72" />
-            <FlippableCard title="Stats" class="mb-4 basis-80 xl:basis-72" />
+            <ChatsDisplay />
         </div>
     </main>
 </template>
 
 <script setup>
 import Carousel from './cards/Carousel.vue';
-import FlippableCard from './cards/ChartCard/FlippableCard.vue';
+import ChatsDisplay from './cards/ChatsDisplay.vue';
+import { useShotData } from '../services/stores/shotData';
+import { onMounted } from 'vue';
+import { loadShotData } from '../services/data/dataLoader';
+
+const shotDataStore = useShotData()
+
+onMounted(async () => {
+    const result = await loadShotData("Moses Moody")
+    console.log("Charged data:", result);
+})
+
 </script>

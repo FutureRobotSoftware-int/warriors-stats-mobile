@@ -9,10 +9,7 @@ const playersStore = usePlayers()
 
 onMounted(async () => {
     await loadPlayers()
-    console.log(playersStore.players)
 })
-
-console.log(playersStore.players)
 </script>
 
 <template>

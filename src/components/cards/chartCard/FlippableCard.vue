@@ -27,7 +27,8 @@ const toggleFlip = () => {
 };
 
 defineProps({
-    title: String
+    title: String,
+    data: Array
 });
 </script>
 

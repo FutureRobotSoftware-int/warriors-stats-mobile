@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
-import type { Player } from "../../types/player";
+import type { IPlayer } from "../../types/player";
 
 export const usePlayers = defineStore('players', {
-    state: (): { players: Player[]; nextId: number } => ({
+    state: (): { players: IPlayer[]; nextId: number } => ({
         players: [],
         nextId: 0,
     }),
@@ -15,7 +15,7 @@ export const usePlayers = defineStore('players', {
         }
     },
     actions: {
-        addPlayers(newPlayer: Omit<Player, 'id'>[]) {
+        addPlayers(newPlayer: Omit<IPlayer, 'id'>[]) {
             newPlayer.forEach(p => {
                 this.players.push({
                     id: this.nextId++,
