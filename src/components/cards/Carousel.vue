@@ -2,30 +2,39 @@
 import emblaCarouselVue from 'embla-carousel-vue'
 import SmallCard from './SmallCard.vue';
 import { useShotData } from '../../services/stores/shotData';
-import { onMounted, computed } from 'vue';
+import { computed } from 'vue';
 
 const [emblaRef] = emblaCarouselVue()
+const shotDataStore = useShotData()
 
-const shotDataStore = useShotData();
+const metrics = [
+    { title: 'Overall FG%', method: 'calcFG', suffix: '%' },
+    { title: 'Overall PPP', method: 'calcPPP' },
+    { title: 'Preferred Off. Dribble Hand', method: 'calcOffDrb' },
+    { title: 'Preferred Footwork', method: 'getMostCommonColumnValue', args: ['Hop/1-2'] },
+    { title: 'Preferred Off.', method: 'getMostCommonColumnValue', args: ['Offensive Action'] },
+    { title: 'Most common Defender Distance', method: 'getMostCommonColumnValue', args: ['Defender Distance'] },
+]
 
-const fg = computed(() => {
-    return shotDataStore.calcFG() + '%'
-})
-
+const statCards = computed(() =>
+    metrics.map(({ title, method, suffix = '', args = [] }) => {
+        const value = shotDataStore[method](...args)
+        return {
+            title,
+            stat: value + suffix
+        }
+    })
+)
 </script>
 
 <template>
     <div class="embla m-4" ref="emblaRef">
         <div class="embla__container">
-            <SmallCard title="Overall FG%" :stat="fg" />
-            <SmallCard title="Overall PPP" stat="1.3" />
-            <SmallCard title="Preferred Off. Dribble Hand" stat="LEFT" />
-            <SmallCard title="Preferred Footwork" stat="HOP" />
-            <SmallCard title="Preferred Off." stat="HOP" />
-            <SmallCard title="Most common Defender Distance" stat="CLOSE" />
+            <SmallCard v-for="({ title, stat }, index) in statCards" :key="index" :title="title" :stat="stat" />
         </div>
     </div>
 </template>
+
 
 <style scoped>
 .embla {
