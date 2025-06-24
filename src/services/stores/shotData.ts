@@ -10,6 +10,9 @@ export const useShotData = defineStore('shotData', {
         getAll(state) {
             return state.entries;
         },
+        getMake(state) {
+            return state.entries.filter((entry) => entry["Make/Miss"].trim() === "Make")
+        }
     },
     actions: {
         clearData() {
@@ -85,9 +88,44 @@ export const useShotData = defineStore('shotData', {
             return result.toFixed(1);
         },
 
-        calcOffDrb(): string | null {
-            return this.getMostCommonColumnValue("Off Dribble Hand");
-        }
+        getGroupedData<T extends keyof IShotData>(col: T): { value: number, name: string }[] {
+            const values = this.getColumnValues(col);
+            const countMap: Record<string, number> = {};
 
+            for (const val of values) {
+                const key = String(val);
+                countMap[key] = (countMap[key] || 0) + 1;
+            }
+
+            return Object.entries(countMap).map(([name, value]) => ({
+                value,
+                name
+            }));
+        },
+
+        getFGByColumn<T extends keyof IShotData>(col: T): { name: string; value: number }[] {
+            const grouped: Record<string, { makes: number; total: number }> = {};
+
+            this.entries.forEach(entry => {
+                const key = String(entry[col]);
+                const result = String(entry["Make/Miss"]).trim();
+
+                if (!key) return;
+
+                if (!grouped[key]) {
+                    grouped[key] = { makes: 0, total: 0 };
+                }
+
+                grouped[key].total += 1;
+                if (result === "Make") {
+                    grouped[key].makes += 1;
+                }
+            });
+
+            return Object.entries(grouped).map(([name, { makes, total }]) => {
+                const fg = total > 0 ? Math.round((makes / total) * 100) : 0;
+                return { name, value: fg };
+            });
+        }
     }
 })

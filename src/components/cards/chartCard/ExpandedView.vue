@@ -4,7 +4,7 @@
             <button @click="$emit('close')"
                 class="absolute top-2 right-4 text-2xl font-bold hover:text-error">×</button>
             <h2 class="text-2xl font-bold mb-4">{{ title }} (Expandido)</h2>
-            <div class="w-full h-96 bg-info content-center text-center">Sample Chart Expanded</div>
+            <slot></slot>
         </div>
     </div>
 </template>

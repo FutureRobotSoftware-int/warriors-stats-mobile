@@ -12,7 +12,7 @@
                     </svg>
                 </button>
             </div>
-            <div class="w-full h-48 bg-info content-center">Sample Chart</div>
+            <slot></slot>
         </div>
     </div>
 </template>

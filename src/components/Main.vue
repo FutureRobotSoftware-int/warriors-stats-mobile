@@ -10,7 +10,7 @@
 
 <script setup>
 import Carousel from './cards/Carousel.vue';
-import ChatsDisplay from './cards/ChatsDisplay.vue';
+import ChatsDisplay from './cards/ChartsDisplay.vue';
 import { useShotData } from '../services/stores/shotData';
 import { onMounted } from 'vue';
 import { loadShotData } from '../services/data/dataLoader';

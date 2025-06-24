@@ -10,7 +10,7 @@ const shotDataStore = useShotData()
 const metrics = [
     { title: 'Overall FG%', method: 'calcFG', suffix: '%' },
     { title: 'Overall PPP', method: 'calcPPP' },
-    { title: 'Preferred Off. Dribble Hand', method: 'calcOffDrb' },
+    { title: 'Preferred Off. Dribble Hand', method: 'getMostCommonColumnValue', args: ['Off Dribble Hand'] },
     { title: 'Preferred Footwork', method: 'getMostCommonColumnValue', args: ['Hop/1-2'] },
     { title: 'Preferred Off.', method: 'getMostCommonColumnValue', args: ['Offensive Action'] },
     { title: 'Most common Defender Distance', method: 'getMostCommonColumnValue', args: ['Defender Distance'] },
