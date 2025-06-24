@@ -12,7 +12,9 @@ export const useShotData = defineStore('shotData', {
         },
         getMake(state) {
             return state.entries.filter((entry) => entry["Make/Miss"].trim() === "Make")
-        }
+        },
+        getByMakeMiss: (state) => (value: string) =>
+            state.entries.filter(entry => entry["Make/Miss"].trim() === value)
     },
     actions: {
         clearData() {
@@ -21,14 +23,12 @@ export const useShotData = defineStore('shotData', {
         },
 
         addData(newEntry: Omit<IShotData, 'id'>[]) {
-            newEntry.forEach(p => {
-                this.entries.push({
-                    id: this.nextId++,
-                    ...p
-                });
+            const ids = newEntry.map((p) => {
+                const id = this.nextId++;
+                this.entries.push({ id, ...p });
+                return id;
             });
-
-            return this.entries.length;
+            return ids;
         },
 
         getColumnValues<T extends keyof IShotData>(col: T): IShotData[T][] {
@@ -67,13 +67,13 @@ export const useShotData = defineStore('shotData', {
         },
 
         calcFG(): string {
-            const makes = this.getColumnValues("Make/Miss").filter(val => String(val).trim() === "Make").length;
+            const makes = this.getColumnValues("Make/Miss").reduce((acc, val) => acc + (val.trim() === "Make" ? 1 : 0), 0);
             const total = this.getColumnValues("Make/Miss").length;
 
             if (total === 0) return "0";
 
             const result = Math.round((makes / total) * 100);
-            return result.toString(); // o `${result}%`
+            return result.toString();
         },
 
         calcPPP(): string {
@@ -126,6 +126,84 @@ export const useShotData = defineStore('shotData', {
                 const fg = total > 0 ? Math.round((makes / total) * 100) : 0;
                 return { name, value: fg };
             });
+        },
+
+        getStackedPPPAndFrequencyByActionArea() {
+            const dataMap = new Map<
+                string, // action
+                Map<string, { totalPTS: number; count: number }>
+            >();
+
+            const actionsSet = new Set<string>();
+            const areasSet = new Set<string>();
+
+            this.entries.forEach(entry => {
+                const action = entry['Offensive Action'];
+                const area = entry.Area;
+                const pts = Number(entry.PTS);
+
+                if (!action || !area || isNaN(pts)) return;
+
+                actionsSet.add(action);
+                areasSet.add(area);
+
+                if (!dataMap.has(action)) {
+                    dataMap.set(action, new Map());
+                }
+
+                const areaMap = dataMap.get(action)!;
+
+                if (!areaMap.has(area)) {
+                    areaMap.set(area, { totalPTS: 0, count: 0 });
+                }
+
+                const record = areaMap.get(area)!;
+                record.totalPTS += pts;
+                record.count += 1;
+            });
+
+            const actions = Array.from(actionsSet).sort();
+            const areas = Array.from(areasSet).sort();
+
+            const series = areas.map(area => ({
+                name: area,
+                type: 'bar',
+                stack: 'total',
+                emphasis: { focus: 'series' },
+                data: actions.map(action => {
+                    const stat = dataMap.get(action)?.get(area);
+                    return stat
+                        ? {
+                            value: stat.count,
+                            ppp: Number((stat.totalPTS / stat.count).toFixed(2)),
+                        }
+                        : {
+                            value: 0,
+                            ppp: 0,
+                        };
+                }),
+            }));
+
+            const pppLine = actions.map(action => {
+                const areaMap = dataMap.get(action);
+                if (!areaMap) return 0;
+
+                let totalPTS = 0;
+                let count = 0;
+                for (const { totalPTS: pts, count: c } of areaMap.values()) {
+                    totalPTS += pts;
+                    count += c;
+                }
+
+                return count > 0 ? Number((totalPTS / count).toFixed(2)) : 0;
+            });
+
+            return {
+                actions,
+                series,
+                pppLine,
+            };
         }
+
     }
 })

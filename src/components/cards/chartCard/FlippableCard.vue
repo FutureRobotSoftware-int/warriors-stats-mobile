@@ -12,7 +12,7 @@
         </div>
 
         <ExpandedView v-if="isExpanded" :title="title" @close="isExpanded = false">
-            <BaseChart :option="data" />
+            <BaseChart :option="altData" />
         </ExpandedView>
     </div>
 </template>
@@ -33,7 +33,8 @@ const toggleFlip = () => {
 
 defineProps({
     title: String,
-    data: Object
+    data: Object,
+    altData: Object
 });
 </script>
 

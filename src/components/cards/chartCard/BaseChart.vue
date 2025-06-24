@@ -1,39 +1,57 @@
 <template>
-    <v-chart class="chart" :option="option" autoresize />
-</template>
-
-<script setup>
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import { PieChart } from 'echarts/charts';
-import {
+    <v-chart
+      class="chart"
+      :option="option"
+      autoresize
+      :style="{ width, height }"
+    />
+  </template>
+  
+  <script setup>
+  import { use } from 'echarts/core';
+  import { CanvasRenderer } from 'echarts/renderers';
+  import { PieChart, BarChart, LineChart } from 'echarts/charts';
+  import {
     TitleComponent,
     TooltipComponent,
     LegendComponent,
-} from 'echarts/components';
-import VChart, { THEME_KEY } from 'vue-echarts';
-import { ref, provide } from 'vue';
-
-use([
+    GridComponent,
+  } from 'echarts/components';
+  import VChart, { THEME_KEY } from 'vue-echarts';
+  import { provide } from 'vue';
+  
+  use([
     CanvasRenderer,
     PieChart,
     TitleComponent,
     TooltipComponent,
     LegendComponent,
-]);
-
-provide(THEME_KEY, 'light');
-
-const props = defineProps({
+    GridComponent,
+    BarChart,
+    LineChart,
+  ]);
+  
+  provide(THEME_KEY, 'light');
+  
+  const props = defineProps({
     option: {
-        type: Object,
-        required: true,
+      type: Object,
+      required: true,
     },
-});
-</script>
-
-<style scoped>
-.chart {
-    height: 15rem;
-}
-</style>
+    width: {
+      type: String,
+      default: '100%',
+    },
+    height: {
+      type: String,
+      default: '100%',
+    },
+  });
+  </script>
+  
+  <style scoped>
+  .chart {
+    display: block;
+  }
+  </style>
+  

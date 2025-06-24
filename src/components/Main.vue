@@ -1,7 +1,7 @@
 <template>
     <main class="m-1 mr-0">
         <Carousel />
-        <div class="divider divider-neutral"></div>
+        <hr>
         <div class="flex flex-wrap justify-between m-4">
             <ChatsDisplay />
         </div>

@@ -1,6 +1,6 @@
 <template>
     <div class="absolute inset-0 backface-hidden">
-        <div class="card-body text-center pt-3">
+        <div class="h-full card-body text-center pt-3">
             <div class="flex items-center justify-between">
                 <button class="btn btn-neutral" @click="$emit('flip')">⇄</button>
                 <h2 class="text-xl font-semibold">{{ title }}</h2>
