@@ -9,13 +9,14 @@ export const useGraphFilters = defineStore('graphFilters', {
 
     actions: {
         setFilter(field: string, value: string) {
-            if (this.selectedFilters[field] === value && this.activeSource === field) {
+            if (this.selectedFilters[field] === value) {
                 delete this.selectedFilters[field]
-                this.activeSource = null
+                if (this.activeSource === field) this.activeSource = null
             } else {
-                this.selectedFilters = { [field]: value }
+                this.selectedFilters[field] = value
                 this.activeSource = field
             }
+            console.log(this.selectedFilters)
         },
 
         clearFilter(field: string) {
@@ -24,15 +25,16 @@ export const useGraphFilters = defineStore('graphFilters', {
         },
 
         toggleCategoryVisibility(field: string, category: string) {
-            if (!this.hiddenCategories[field]) {
-                this.hiddenCategories[field] = new Set()
-            }
+            // if (!this.hiddenCategories[field]) {
+            //     this.hiddenCategories[field] = new Set()
+            // }
 
-            if (this.hiddenCategories[field].has(category)) {
-                this.hiddenCategories[field].delete(category)
-            } else {
-                this.hiddenCategories[field].add(category)
-            }
+            // if (this.hiddenCategories[field].has(category)) {
+            //     this.hiddenCategories[field].delete(category)
+            // } else {
+            //     this.hiddenCategories[field].add(category)
+            // }
+            // console.log(this.hiddenCategories)
         },
 
         clearAll() {

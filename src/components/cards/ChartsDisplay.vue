@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import { useShotData } from '../../services/stores/shotData'
 import { useGraphFilters } from '../../services/stores/graphFilters'
 import { buildChartOption, buildBarChartOption } from '../../services/charts/buildChart'
+import FilterSummary from '../FilterSummary.vue'
 
 const shotDataStore = useShotData()
 const filters = useGraphFilters()
@@ -47,6 +48,9 @@ const barChartData = computed(() => {
 </script>
 
 <template>
+
+  <FilterSummary />
+
   <!-- Bar Chart -->
   <FlippableCard
     :data="barChartData"

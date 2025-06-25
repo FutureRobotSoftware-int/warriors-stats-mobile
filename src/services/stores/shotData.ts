@@ -88,8 +88,14 @@ export const useShotData = defineStore('shotData', {
             return result.toFixed(1);
         },
 
-        getGroupedData<T extends keyof IShotData>(col: T): { value: number, name: string }[] {
-            const values = this.getColumnValues(col);
+        getGroupedData<T extends keyof IShotData>(
+            col: T,
+            dataset: IShotData[] = this.entries
+        ): { value: number; name: string }[] {
+            const values = dataset
+                .map(entry => entry[col])
+                .filter(val => val !== undefined && val !== null && val !== '') as IShotData[T][];
+
             const countMap: Record<string, number> = {};
 
             for (const val of values) {
@@ -98,8 +104,8 @@ export const useShotData = defineStore('shotData', {
             }
 
             return Object.entries(countMap).map(([name, value]) => ({
+                name,
                 value,
-                name
             }));
         },
 
