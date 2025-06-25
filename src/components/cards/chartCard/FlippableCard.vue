@@ -5,14 +5,14 @@
             <div class="relative w-full h-full transition-transform duration-500 transform-style-preserve-3d"
                 :class="{ 'rotate-y-180': isFlipped }">
                 <CardFront :title="title" @flip="toggleFlip" @expand="isExpanded = true">
-                    <BaseChart :option="data" />
+                    <BaseChart :option="data" :fieldKey="fieldKey" :interactive="true" :filterable="true"/>
                 </CardFront>
                 <CardBack :title="title" @flip="toggleFlip" />
             </div>
         </div>
 
         <ExpandedView v-if="isExpanded" :title="title" @close="isExpanded = false">
-            <BaseChart :option="altData" />
+            <BaseChart :option="altData" :fieldKey="fieldKey" :interactive="true" :filterable="true"/>
         </ExpandedView>
     </div>
 </template>
@@ -34,7 +34,8 @@ const toggleFlip = () => {
 defineProps({
     title: String,
     data: Object,
-    altData: Object
+    altData: Object,
+    fieldKey: String,
 });
 </script>
 

@@ -103,10 +103,10 @@ export const useShotData = defineStore('shotData', {
             }));
         },
 
-        getFGByColumn<T extends keyof IShotData>(col: T): { name: string; value: number }[] {
+        getFGByColumn<T extends keyof IShotData>(col: T, dataset: IShotData[] = this.entries): { name: string; value: number }[] {
             const grouped: Record<string, { makes: number; total: number }> = {};
 
-            this.entries.forEach(entry => {
+            dataset.forEach(entry => {
                 const key = String(entry[col]);
                 const result = String(entry["Make/Miss"]).trim();
 
@@ -203,7 +203,25 @@ export const useShotData = defineStore('shotData', {
                 series,
                 pppLine,
             };
-        }
+        },
 
+        getFilteredEntries(
+            filters: Record<string, string>,
+            hidden: Record<string, Set<string>>,
+            ignoredField: string | null = null
+        ) {
+            return this.entries.filter(entry => {
+                for (const [key, value] of Object.entries(filters)) {
+                    if (key === ignoredField) continue
+                    if (entry[key as keyof IShotData] !== value) return false
+                }
+
+                for (const [field, hiddenSet] of Object.entries(hidden)) {
+                    if (hiddenSet.has(String(entry[field as keyof IShotData]))) return false
+                }
+
+                return true
+            })
+        }
     }
 })
