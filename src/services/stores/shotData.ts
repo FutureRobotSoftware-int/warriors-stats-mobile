@@ -90,9 +90,11 @@ export const useShotData = defineStore('shotData', {
 
         getGroupedData<T extends keyof IShotData>(
             col: T,
-            dataset: IShotData[] = this.entries
+            dataset?: IShotData[]
         ): { value: number; name: string }[] {
-            const values = dataset
+            const data = dataset ?? this.entries;
+
+            const values = data
                 .map(entry => entry[col])
                 .filter(val => val !== undefined && val !== null && val !== '') as IShotData[T][];
 
@@ -109,10 +111,10 @@ export const useShotData = defineStore('shotData', {
             }));
         },
 
-        getFGByColumn<T extends keyof IShotData>(col: T, dataset: IShotData[] = this.entries): { name: string; value: number }[] {
+        getFGByColumn<T extends keyof IShotData>(col: T, dataset?: IShotData[]): { name: string; value: number }[] {
             const grouped: Record<string, { makes: number; total: number }> = {};
-
-            dataset.forEach(entry => {
+            const data = dataset ?? this.entries;
+            data.forEach(entry => {
                 const key = String(entry[col]);
                 const result = String(entry["Make/Miss"]).trim();
 

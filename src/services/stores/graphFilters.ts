@@ -35,6 +35,7 @@ export const useGraphFilters = defineStore('graphFilters', {
             //     this.hiddenCategories[field].add(category)
             // }
             // console.log(this.hiddenCategories)
+            console.log(field, category)
         },
 
         clearAll() {
