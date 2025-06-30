@@ -21,6 +21,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 selectedMode: 'single',
                 radius: [0, '40%'],
                 label: {
+                    show: showLabels,
                     position: 'inner',
                     fontSize: 14
                 },

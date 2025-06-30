@@ -62,7 +62,6 @@ export const useShotData = defineStore('shotData', {
 
             if (mostCommon === null) return null;
 
-            // Devuelve el tipo original (string | number)
             const sample = values.find(v => String(v) === mostCommon);
             return sample ?? null;
         },
@@ -217,11 +216,12 @@ export const useShotData = defineStore('shotData', {
         getFilteredEntries(
             filters: Record<string, string>,
             hidden: Record<string, Set<string>>,
-            ignoredField: string | null = null
+            ignoredField: string | null = null,
+            ignoreSelf: boolean = true
         ) {
             return this.entries.filter(entry => {
                 for (const [key, value] of Object.entries(filters)) {
-                    if (key === ignoredField) continue
+                    if (ignoreSelf && key === ignoredField) continue
                     if (entry[key as keyof IShotData] !== value) return false
                 }
 

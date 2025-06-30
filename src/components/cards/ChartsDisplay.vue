@@ -18,7 +18,7 @@ const metrics = [
 ]
 
 const filteredEntries = (fieldKey) =>
-  shotDataStore.getFilteredEntries(filters.selectedFilters, filters.hiddenCategories, fieldKey)
+  shotDataStore.getFilteredEntries(filters.selectedFilters, filters.hiddenCategories, fieldKey, false)
 
 
 const enrichedData = computed(() =>
