@@ -28,6 +28,7 @@ export const useShotData = defineStore('shotData', {
                 this.entries.push({ id, ...p });
                 return id;
             });
+            console.log("Charged data:", ids.length);
             return ids;
         },
 

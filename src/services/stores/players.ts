@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type { IPlayer } from "../../types/player";
+import { loadShotData } from "../data/dataLoader";
 
 export const usePlayers = defineStore('players', {
     state: (): { players: IPlayer[]; nextId: number } => ({
@@ -8,7 +9,7 @@ export const usePlayers = defineStore('players', {
     }),
     getters: {
         selectedPlayer(state) {
-            return state.players.filter((player) => player.isSelected);
+            return state.players.find(player => player.isSelected) || null;
         },
         allPlayers(state) {
             return state.players;
@@ -22,6 +23,18 @@ export const usePlayers = defineStore('players', {
                     ...p
                 })
             })
+        },
+        selectPlayer(player: IPlayer) {
+            const alreadySelected = this.players.find(p => p.isSelected && p.id === player.id);
+            if (alreadySelected) return;
+
+            this.players.forEach(p => {
+                p.isSelected = (p.id === player.id);
+            });
+
+            loadShotData(player.data);
+
+            console.log("[Player Selected:", player);
         }
     }
 })

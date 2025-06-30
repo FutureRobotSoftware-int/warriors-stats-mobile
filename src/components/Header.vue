@@ -14,16 +14,24 @@ onMounted(async () => {
     }
 })
 
+function handlePlayerChange() {
+  const selected = playersStore.players.find(p => p.id === selectedPlayerId.value);
+  if (selected) {
+    playersStore.selectPlayer(selected);
+  }
+}
+
 </script>
 
 <template>
     <header class="bg-primary p-2 text-white font-medium">
+        <p class="absolute">v.0.0.1</p>
         <div class="flex items-center justify-between mx-24">
             <div class="mx-4">
                 <img src="../assets/i-1193632972.png" class="size-16">
             </div>
             <div class="grow mx-4">
-                <select name="" id="player-select" v-model="selectedPlayerId"
+                <select name="" id="player-select" v-model="selectedPlayerId" @change="handlePlayerChange"
                     class="select select-lg rounded-full border-base-100 bg-primary border-2 focus:outline-base-100">
                     <option value="" class="lg:text-sm">-- Selecciona un jugador --</option>
                     <option class="lg:text-sm" v-for="player in playersStore.players" :key="player.id"

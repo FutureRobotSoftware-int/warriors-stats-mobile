@@ -16,6 +16,9 @@ export async function loadPlayers() {
         isSelected: false
     }));
 
+    console.log(players);
+
+
     return playersStore.addPlayers(players);
 }
 

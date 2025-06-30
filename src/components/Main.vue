@@ -2,8 +2,11 @@
     <main class="m-1 mr-0">
         <Carousel />
         <hr>
-        <div class="flex flex-wrap justify-between m-4">
-            <ChatsDisplay />
+        <div>
+            <div class="flex flex-wrap justify-between m-4">
+                <FilterSummary />
+                <ChatsDisplay />
+            </div>
         </div>
     </main>
 </template>
@@ -14,12 +17,12 @@ import ChatsDisplay from './cards/ChartsDisplay.vue';
 import { useShotData } from '../services/stores/shotData';
 import { onMounted } from 'vue';
 import { loadShotData } from '../services/data/dataLoader';
+import FilterSummary from './FilterSummary.vue';
 
 const shotDataStore = useShotData()
 
 onMounted(async () => {
     const result = await loadShotData("Moses Moody")
-    console.log("Charged data:", result);
 })
 
 </script>

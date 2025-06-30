@@ -1,38 +1,40 @@
 <template>
-    <div class="p-4 rounded-lg border shadow bg-white dark:bg-zinc-900 dark:text-white">
-        <h2 class="text-lg font-semibold mb-2">Resumen de Filtros</h2>
-
-        <p class="mb-2">
-            <strong>Active entries:</strong> {{ filteredCount }} / {{ totalCount }}
-        </p>
-
-        <div v-if="hasFilters" class="mb-4">
-            <p class="font-semibold">Active Filters:</p>
-            <ul class="list-disc list-inside">
-                <li v-for="(value, key) in selectedFilters" :key="key">
-                {{ key }}: <span class="font-mono">{{ value }}</span>
-                </li>
-            </ul>
-
-            <div v-if="hiddenList.length" class="mt-2">
-                <p class="font-semibold">Hidden Categories:</p>
-                <ul class="list-disc list-inside">
-                    <li v-for="(items, key) in hiddenCategories" :key="key">
-                        {{ key }}: 
-                        <span class="font-mono">{{ items.add(', ') }}</span>
-                    </li>
-                </ul>
-            </div>
+    <div class="p-6 rounded-box border border-base-300 shadow-md bg-base-100 text-base-content fixed z-50">
+      <h2 class="text-xl font-bold mb-3">Resumen</h2>
+  
+      <p class="mb-3 text-base">
+        <strong class="">Entradas activas: </strong>
+        <span class="font-mono">{{ filteredCount }}/{{ totalCount }}</span>
+      </p>
+  
+      <div v-if="hasFilters" class="mb-4">
+        <p class="font-semibold">Filtros activos:</p>
+        <ul class="list-disc list-inside text-sm mt-1">
+          <li v-for="(value, key) in selectedFilters" :key="key">
+            {{ key }}: <span class="font-mono">{{ value }}</span>
+          </li>
+        </ul>
+  
+        <div v-if="hiddenList.length" class="mt-3">
+          <p class="font-semibold text-secondary">Categorías ocultas:</p>
+          <ul class="list-disc list-inside text-sm mt-1">
+            <li v-for="(items, key) in hiddenCategories" :key="key">
+              {{ key }}:
+              <span class="font-mono">{{ items.add(', ') }}</span>
+            </li>
+          </ul>
         </div>
-
-        <button
-            @click="clearFilters"
-            class="mt-2 px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition"
-            >
-            Clear
-        </button>
+      </div>
+  
+      <button
+        @click="clearFilters"
+        class="mt-4 btn btn-error text-error-content"
+      >
+        Limpiar filtros
+      </button>
     </div>
-</template>
+  </template>
+  
 
 <script setup lang="ts">
 import { computed } from 'vue'
