@@ -3,7 +3,7 @@
         <div class="bg-base-100 expanded p-6 rounded-2xl shadow-lg w-[90%] max-w-5xl relative">
             <button @click="$emit('close')"
                 class="absolute top-2 right-4 text-2xl font-bold hover:text-error">×</button>
-            <h2 class="text-2xl font-bold mb-4">{{ title }} (Expandido)</h2>
+            <h2 class="text-2xl font-bold mb-4">{{ title }} (Expanded)</h2>
             <slot></slot>
         </div>
     </div>
