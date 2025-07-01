@@ -2,6 +2,52 @@ import type { IChartOptions } from "../../types/chartOptions"
 import type { IShotData } from "../../types/shotData";
 
 export function buildChartOption({ title, values, fg, col }: IChartOptions, showLabels = true) {
+
+    function getColor(name: string): string {
+        const COLOR_MAP: Record<string, string> = {
+            //Offensive moves
+            'DHO': '#66c5cc',
+            'Drive Kick': '#f6cf71',
+            'Flare': '#f89c74',
+            'Iso': '#dcb0f2',
+            'Lift': '#87c55f',
+            'Pin Down': '#9eb9f3',
+            'PnPop': '#fe88b1',
+            'PnR': '#c9db74',
+            'Post Kick Out': '#8be0a4',
+            'Spot Up': '#b497e7',
+            //Area
+            'Left Corner': '#66c5cc',
+            'Left Wing': '#f6cf71',
+            'Top': '#f89c74',
+            'Right Wing': '#dcb0f2',
+            'Right Corner': '#87c55f',
+            //Player Direction
+            'Left': '#66c5cc',
+            'Right': '#f6cf71',
+            'To Hoop': '#dcb0f2',
+            'Away From Hoop': '#87c55f',
+            'Stationary': '#9eb9f3',
+            //Pass Direction
+            'From Hoop': '#f89c74',
+            'N/A Off Dribble': '##1f78b4',
+            //Off Dribble hand
+            'Left to RightPickUp': '#87c55f',
+            'Right to LeftPickup': '#9eb9f3',
+            'N/A': '#1f78b4',
+            //Hop/1-2
+            'Hop  ': '#66c5cc',
+            '1-2 Right/Left': '#f6cf71',
+            '1-2 Left/Right': '#f89c74',
+            //Defender Distance
+            'Tight': '#66c5cc',
+            'Close': '#f6cf71',
+            'Open': '#f89c74',
+            'Wide Open': '#87c55f',
+        };
+        return COLOR_MAP[name] || '#b3b3b3';
+    }
+
     return {
         title: { text: title, left: 'center', show: false },
         tooltip: {
@@ -21,14 +67,17 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 selectedMode: 'single',
                 radius: [0, '40%'],
                 label: {
-                    show: showLabels,
+                    show: false,
                     position: 'inner',
                     fontSize: 14
                 },
                 labelLine: {
                     show: false
                 },
-                data: values
+                data: (values as { name: string; value: number }[]).map(v => ({
+                    ...v,
+                    itemStyle: { color: getColor(v.name) }
+                }))
             },
             {
                 name: 'FG%',
@@ -70,7 +119,10 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                         }
                     }
                 },
-                data: fg
+                data: (fg as { name: string; value: number }[]).map(v => ({
+                    ...v,
+                    itemStyle: { color: getColor(v.name) }
+                }))
             }
         ],
     }

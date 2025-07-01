@@ -1,6 +1,6 @@
 export interface IChartOptions {
-    title: string,
-    values: string[],
-    fg: string[],
-    col: string[],
+    title: string;
+    values: { name: string; value: number }[];
+    fg: { name: string; value: number }[];
+    col: string[];
 }
