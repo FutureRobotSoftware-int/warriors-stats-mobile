@@ -4,8 +4,8 @@
         <hr>
         <div>
             <div class="flex flex-wrap justify-between m-4">
-                <FilterSummary />
                 <ChatsDisplay />
+                <FilterSummary />
             </div>
         </div>
     </main>

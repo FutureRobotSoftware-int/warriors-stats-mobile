@@ -67,12 +67,12 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 selectedMode: 'single',
                 radius: [0, '40%'],
                 label: {
-                    show: false,
+                    show: true,
                     position: 'inner',
                     fontSize: 14
                 },
                 labelLine: {
-                    show: false
+                    show: true
                 },
                 data: (values as { name: string; value: number }[]).map(v => ({
                     ...v,
