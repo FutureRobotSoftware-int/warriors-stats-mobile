@@ -41,8 +41,13 @@ export const useShotData = defineStore('shotData', {
             return [...new Set(values)];
         },
 
-        getMostCommonColumnValue<T extends keyof IShotData>(col: T): IShotData[T] | null {
-            const values = this.getColumnValues(col);
+        getMostCommonColumnValue<T extends keyof IShotData>(
+            this: { entries: IShotData[] },
+            col: T,
+            dataset?: IShotData[]
+        ): IShotData[T] | null {
+            const data = dataset ?? this.entries;
+            const values = data.map(entry => entry[col]);
             const countMap: Record<string, number> = {};
 
             for (const val of values) {
@@ -66,27 +71,42 @@ export const useShotData = defineStore('shotData', {
             return sample ?? null;
         },
 
-        calcFG(): string {
-            const makes = this.getColumnValues("Make/Miss").reduce((acc, val) => acc + (val.trim() === "Make" ? 1 : 0), 0);
-            const total = this.getColumnValues("Make/Miss").length;
+        calcFG(this: { entries: IShotData[] }, dataset?: IShotData[]): string {
+            const data = dataset ?? this.entries;
 
-            if (total === 0) return "0";
+            let total = 0;
+            let makes = 0;
 
-            const result = Math.round((makes / total) * 100);
-            return result.toString();
+            data.forEach(entry => {
+                const result = String(entry["Make/Miss"]).trim();
+                if (result === "Make" || result === "Miss") {
+                    total += 1;
+                    if (result === "Make") {
+                        makes += 1;
+                    }
+                }
+            });
+
+            const fg = total > 0 ? Math.round((makes / total) * 100) : 0;
+            return fg.toFixed();
         },
 
-        calcPPP(): string {
-            const points = this.getColumnValues("PTS");
+        calcPPP(this: { entries: IShotData[] }, dataset?: IShotData[]): string {
+            const data = dataset ?? this.entries;
+
+            const points = data.map(entry => Number(entry["PTS"])).filter(p => !isNaN(p));
             const total = points.length;
 
-            if (total === 0) return "0.0";
+            if (total === 0) {
+                return "0.0";
+            }
 
-            const sum = points.reduce((a, b) => a + Number(b), 0);
+            const sum = points.reduce((a, b) => a + b, 0);
             const result = sum / total;
 
-            return result.toFixed(1);
+            return result.toFixed(2);
         },
+
 
         getGroupedData<T extends keyof IShotData>(
             col: T,

@@ -4,6 +4,7 @@ import type { IPlayer } from "../../types/player";
 import { usePlayers } from "../stores/players";
 import { useShotData } from "../stores/shotData";
 import type { IShotData } from "../../types/shotData";
+import { usePeriod } from "../stores/year";
 
 export async function loadPlayers() {
     const parsedData: any = await parseCSV('data/players.csv');
@@ -23,7 +24,9 @@ export async function loadPlayers() {
 }
 
 export async function loadFilters() {
-    return await parseCSV("data/filters.csv");
+    const periodStore = usePeriod()
+
+    return periodStore.addPeriods();
 }
 
 export async function loadShotData(player: string) {

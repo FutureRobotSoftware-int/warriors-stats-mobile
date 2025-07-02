@@ -18,11 +18,16 @@ import { useShotData } from '../services/stores/shotData';
 import { onMounted } from 'vue';
 import { loadShotData } from '../services/data/dataLoader';
 import FilterSummary from './FilterSummary.vue';
+import { usePeriod } from '../services/stores/year';
 
 const shotDataStore = useShotData()
 
 onMounted(async () => {
     const result = await loadShotData("Moses Moody")
+
+    const periodStore = usePeriod()
+
+    periodStore.addPeriods()
 })
 
 </script>
