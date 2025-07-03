@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-300 overflow-hidden no-scrollbar w-full">
+  <div class="bg-base-300 overflow-hidden no-scrollbar w-full h-full min-h-dvh">
     <Header />
     <div class="flex w-full">
       <Main class="w-full" />

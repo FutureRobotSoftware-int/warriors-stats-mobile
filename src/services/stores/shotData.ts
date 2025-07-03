@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type { IShotData } from "../../types/shotData";
+import { useGraphFilters } from "./graphFilters";
 
 export const useShotData = defineStore('shotData', {
     state: (): { entries: IShotData[]; nextId: number } => ({
@@ -14,7 +15,24 @@ export const useShotData = defineStore('shotData', {
             return state.entries.filter((entry) => entry["Make/Miss"].trim() === "Make")
         },
         getByMakeMiss: (state) => (value: string) =>
-            state.entries.filter(entry => entry["Make/Miss"].trim() === value)
+            state.entries.filter(entry => entry["Make/Miss"].trim() === value),
+        getActiveEntries(state): IShotData[] {
+            const graphFilters = useGraphFilters();
+            return state.entries.filter(entry => {
+                const filters = graphFilters.selectedFilters;
+                const hidden = graphFilters.hiddenCategories;
+
+                for (const [key, value] of Object.entries(filters)) {
+                    if (entry[key as keyof IShotData] !== value) return false;
+                }
+
+                for (const [field, hiddenSet] of Object.entries(hidden)) {
+                    if (hiddenSet.has(String(entry[field as keyof IShotData]))) return false;
+                }
+
+                return true;
+            });
+        }
     },
     actions: {
         clearData() {

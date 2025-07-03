@@ -1,13 +1,12 @@
 <template>
-    <main class="m-1 mr-0">
+    <main class="m-1">
         <Carousel />
         <hr>
         <div>
-            <div class="flex flex-wrap justify-between m-4">
-                <ChatsDisplay />
-                <FilterSummary />
-            </div>
+            <TabSelector />
         </div>
+        <FilterSummary />
+        
     </main>
 </template>
 
@@ -19,6 +18,7 @@ import { onMounted } from 'vue';
 import { loadShotData } from '../services/data/dataLoader';
 import FilterSummary from './FilterSummary.vue';
 import { usePeriod } from '../services/stores/year';
+import TabSelector from './TabSelector.vue';
 
 const shotDataStore = useShotData()
 
