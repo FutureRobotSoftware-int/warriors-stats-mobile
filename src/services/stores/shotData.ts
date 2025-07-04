@@ -174,7 +174,9 @@ export const useShotData = defineStore('shotData', {
             });
         },
 
-        getStackedPPPAndFrequencyByActionArea() {
+        getStackedPPPAndFrequencyByActionArea(this: { entries: IShotData[] }, dataset?: IShotData[]) {
+            const data = dataset ?? this.entries;
+
             const dataMap = new Map<
                 string, // action
                 Map<string, { totalPTS: number; count: number }>
@@ -183,7 +185,7 @@ export const useShotData = defineStore('shotData', {
             const actionsSet = new Set<string>();
             const areasSet = new Set<string>();
 
-            this.entries.forEach(entry => {
+            data.forEach(entry => {
                 const action = entry['Offensive Action'];
                 const area = entry.Area;
                 const pts = Number(entry.PTS);
@@ -211,7 +213,7 @@ export const useShotData = defineStore('shotData', {
             const actions = Array.from(actionsSet).sort();
             const areas = Array.from(areasSet).sort();
 
-            const series = areas.map(area => ({
+            const barSeries = areas.map(area => ({
                 name: area,
                 type: 'bar',
                 stack: 'total',
@@ -230,26 +232,35 @@ export const useShotData = defineStore('shotData', {
                 }),
             }));
 
-            const pppLine = actions.map(action => {
-                const areaMap = dataMap.get(action);
-                if (!areaMap) return 0;
+            const lineSeries = {
+                name: 'PPP',
+                type: 'line',
+                yAxisIndex: 1,
+                data: actions.map(action => {
+                    const areaMap = dataMap.get(action);
+                    if (!areaMap) return 0;
 
-                let totalPTS = 0;
-                let count = 0;
-                for (const { totalPTS: pts, count: c } of areaMap.values()) {
-                    totalPTS += pts;
-                    count += c;
-                }
+                    let totalPTS = 0;
+                    let totalCount = 0;
 
-                return count > 0 ? Number((totalPTS / count).toFixed(2)) : 0;
-            });
+                    areaMap.forEach(({ totalPTS: pts, count }) => {
+                        totalPTS += pts;
+                        totalCount += count;
+                    });
+
+                    return totalCount > 0 ? Number((totalPTS / totalCount).toFixed(2)) : 0;
+                }),
+                itemStyle: { color: '#2196F3' },
+                lineStyle: { width: 2, type: 'dashed' },
+                symbolSize: 6,
+            };
 
             return {
                 actions,
-                series,
-                pppLine,
+                series: [...barSeries, lineSeries],
             };
         },
+
 
         getFilteredEntries(
             filters: Record<string, string>,

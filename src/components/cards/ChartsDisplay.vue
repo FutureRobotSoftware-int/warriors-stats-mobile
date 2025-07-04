@@ -41,8 +41,15 @@ const enrichedData = computed(() =>
 )
 
 const barChartData = computed(() => {
-  const { actions, series, pppLine } = shotDataStore.getStackedPPPAndFrequencyByActionArea(filteredEntries.value)
-  return buildBarChartOption(actions, series, pppLine)
+  const entries = shotDataStore.getFilteredEntries(
+    filters.selectedFilters,
+    filters.hiddenCategories,
+    null,
+    false
+  )
+
+  const { actions, series } = shotDataStore.getStackedPPPAndFrequencyByActionArea(entries)
+  return buildBarChartOption(actions, series)
 })
 
 </script>
@@ -54,7 +61,7 @@ const barChartData = computed(() => {
     :data="barChartData"
     :altData="barChartData"
     title="Offensive Action per PPP"
-    class="mb-4 basis-138"
+    class="mb-4 w-full"
     fieldKey="Offensive Action"
   />
 
@@ -66,6 +73,6 @@ const barChartData = computed(() => {
     :altData="chart.altOption"
     :title="chart.title"
     :fieldKey="chart.args[0]"
-    class="mb-4 basis-138"
+    class="mb-4 basis-136"
   />
 </template>

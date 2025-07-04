@@ -1,13 +1,13 @@
 <template>
     <div class="relative">
         <!-- Contenedor con efecto de perspectiva -->
-        <div class="card bg-base-100 shadow-sm w-full h-80 perspective overflow-hidden">
+        <div class="card bg-base-100 shadow-sm w-full h-120 perspective overflow-hidden">
             <div class="relative w-full h-full transition-transform duration-500 transform-style-preserve-3d"
                 :class="{ 'rotate-y-180': isFlipped }">
                 <CardFront :title="title" @flip="toggleFlip" @expand="isExpanded = true">
                     <BaseChart :option="data" :fieldKey="fieldKey" :interactive="true" :filterable="true"/>
                 </CardFront>
-                <CardBack :title="title" @flip="toggleFlip" />
+                <!-- <CardBack :title="title" @flip="toggleFlip" /> -->
             </div>
         </div>
 

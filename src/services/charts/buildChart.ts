@@ -137,7 +137,6 @@ export function buildBarChartOption(
         emphasis: object;
         data: { value: number; ppp: number }[];
     }[],
-    pppLine: number[]
 ) {
 
     const names = series.map((entry) => entry.name);
@@ -149,6 +148,7 @@ export function buildBarChartOption(
         },
         legend: {
             data: [...names, "PPP"],
+            location: 'center',
         },
         xAxis: {
             type: 'category',
@@ -175,22 +175,15 @@ export function buildBarChartOption(
                 splitNumber: 6,
                 splitLine: { show: false },
                 axisLabel: {
-                    formatter: (val: number) => val.toFixed(2)  // 👈 redondea a 2 decimales
+                    formatter: (val: number) => val.toFixed(2)
                 }
             }
         ],
         series: [
-            ...series,
-            {
-                name: 'PPP',
-                type: 'line',
-                yAxisIndex: 1,
-                data: pppLine,
-                itemStyle: { color: '#2196F3' },
-                lineStyle: { width: 2, type: 'dashed' },
-                symbol: 'circle',
-                symbolSize: 6,
-            }
+            ...series.map(s => ({
+                ...s,
+                itemStyle: { color: getColor(s.name) }
+            })),
         ]
     };
 }

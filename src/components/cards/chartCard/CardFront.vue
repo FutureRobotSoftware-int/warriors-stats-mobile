@@ -2,7 +2,7 @@
     <div class="absolute inset-0 backface-hidden">
         <div class="h-full card-body text-center pt-3">
             <div class="flex items-center justify-between">
-                <button class="btn btn-neutral" @click="$emit('flip')">⇄</button>
+                <!-- <button class="btn btn-neutral" @click="$emit('flip')">⇄</button> -->
                 <h2 class="text-xl font-semibold">{{ title }}</h2>
                 <button @click="$emit('expand')" class="">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
