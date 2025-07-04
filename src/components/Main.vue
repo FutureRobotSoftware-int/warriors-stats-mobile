@@ -1,5 +1,5 @@
 <template>
-    <main class="m-1">
+    <main class="">
         <Carousel />
         <hr>
         <div>

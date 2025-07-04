@@ -34,7 +34,7 @@ const statCards = computed(() =>
 </script>
 
 <template>
-  <div class="embla m-4" ref="emblaRef">
+  <div class="embla m-1" ref="emblaRef">
     <div class="embla__container">
       <SmallCard
         v-for="({ title, stat }, index) in statCards"

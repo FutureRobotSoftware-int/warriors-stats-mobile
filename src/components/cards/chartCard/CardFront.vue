@@ -1,10 +1,9 @@
 <template>
     <div class="absolute inset-0 backface-hidden">
         <div class="h-full card-body text-center pt-3">
-            <div class="flex items-center justify-between">
-                <!-- <button class="btn btn-neutral" @click="$emit('flip')">⇄</button> -->
+            <div class="flex items-center justify-center">
                 <h2 class="text-xl font-semibold">{{ title }}</h2>
-                <button @click="$emit('expand')" class="">
+                <button @click="$emit('expand')" class=" absolute right-6">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round"

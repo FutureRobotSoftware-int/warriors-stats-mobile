@@ -2,13 +2,14 @@
 import { ref } from 'vue'
 import ChartsDisplay from './cards/ChartsDisplay.vue'
 import Table from './tabs/Table.vue'
+import BarChartDisplay from './cards/chartCard/BarChartDisplay.vue'
 
-const tabs = ['Charts', 'Table']
+const tabs = ['3PTS','Charts', 'Raw Data']
 const selected = ref(0)
 </script>
 
 <template>
-    <div class="flex h-[calc(77dvh-4rem)] border border-gray-200 rounded-lg overflow-hidden m-2">
+    <div class="flex h-[calc(85dvh-4rem)] border border-gray-200 rounded-lg overflow-hidden m-2">
       <div class="flex flex-col bg-base-200">
         <button
           v-for="(tab, idx) in tabs"
@@ -23,16 +24,20 @@ const selected = ref(0)
         </button>
       </div>
   
-      <!-- Panel de contenido -->
       <div class="flex-1 flex flex-col bg-base-100">
         <div v-if="selected === 0" class="flex-1 overflow-y-auto">
-          <div class="flex flex-wrap justify-between m-4">
-            <ChartsDisplay />
+          <div class="flex flex-wrap h-full justify-between">
+            <BarChartDisplay />
           </div>
         </div>
         <div v-else-if="selected === 1" class="flex-1 overflow-y-auto">
           <div class="m-4">
-            <Table />
+            <ChartsDisplay />
+          </div>
+        </div>
+        <div v-else-if="selected === 2" class="flex-1 overflow-y-auto">
+          <div class="m-4">
+            <Table></Table>
           </div>
         </div>
       </div>

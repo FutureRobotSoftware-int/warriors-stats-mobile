@@ -40,7 +40,7 @@ function handlePlayerChange() {
 </script>
 
 <template>
-    <header class="bg-primary p-2 text-white font-medium">
+    <header class="bg-primary p-0 text-white font-medium">
         <p class="absolute">v.0.1.0</p>
         <div class="flex items-center justify-between mx-24">
             <div class="mx-4">
@@ -49,7 +49,7 @@ function handlePlayerChange() {
             <div class="grow mx-4">
                 <select name="" id="player-select" v-model="selectedPlayerId" @change="handlePlayerChange"
                     class="select select-lg rounded-full border-base-100 bg-primary border-2 focus:outline-base-100">
-                    <option value="" class="lg:text-sm">-- Selecciona un jugador --</option>
+                    <option value="" class="lg:text-sm">-- Select a player --</option>
                     <option class="lg:text-sm" v-for="player in playersStore.players" :key="player.id"
                         :value="player.id">
                         {{ player.player }} #{{ player.number }}
@@ -62,7 +62,7 @@ function handlePlayerChange() {
                     @change="handlePeriodChange"
                     class="select select-lg rounded-full border-base-100 bg-primary w-fit border-2 focus:outline-base-100"
                     >
-                    <option value="">-- Selecciona un periodo --</option>
+                    <option value="">-- Select a season --</option>
                     <option
                         v-for="period in periodStore.periods"
                         :key="period.id"

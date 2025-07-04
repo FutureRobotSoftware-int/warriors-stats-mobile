@@ -4,6 +4,17 @@ import { computed } from 'vue'
 import { useShotData } from '../../services/stores/shotData'
 import { useGraphFilters } from '../../services/stores/graphFilters'
 import { buildChartOption, buildBarChartOption } from '../../services/charts/buildChart'
+import CardFront from './chartCard/CardFront.vue'
+import BaseChart from './chartCard/BaseChart.vue'
+import ExpandedView from './chartCard/ExpandedView.vue'
+import { ref } from 'vue';
+
+defineProps({
+    title: String,
+    data: Object,
+    altData: Object,
+    fieldKey: String,
+});
 
 const shotDataStore = useShotData()
 const filters = useGraphFilters()
@@ -39,40 +50,19 @@ const enrichedData = computed(() =>
     }
   })
 )
-
-const barChartData = computed(() => {
-  const entries = shotDataStore.getFilteredEntries(
-    filters.selectedFilters,
-    filters.hiddenCategories,
-    null,
-    false
-  )
-
-  const { actions, series } = shotDataStore.getStackedPPPAndFrequencyByActionArea(entries)
-  return buildBarChartOption(actions, series)
-})
-
 </script>
 
 <template>
 
-  <!-- Bar Chart -->
-  <FlippableCard
-    :data="barChartData"
-    :altData="barChartData"
-    title="Offensive Action per PPP"
-    class="mb-4 w-full"
-    fieldKey="Offensive Action"
-  />
-
-  <!-- Pie Charts -->
-  <FlippableCard
-    v-for="(chart, index) in enrichedData"
-    :key="index"
-    :data="chart.option"
-    :altData="chart.altOption"
-    :title="chart.title"
-    :fieldKey="chart.args[0]"
-    class="mb-4 basis-136"
-  />
+  <diV class="flex flex-wrap">
+    <FlippableCard
+      v-for="(chart, index) in enrichedData"
+      :key="index"
+      :data="chart.option"
+      :altData="chart.altOption"
+      :title="chart.title"
+      :fieldKey="chart.args[0]"
+      class="m-1"
+    />
+  </diV>
 </template>

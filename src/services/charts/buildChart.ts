@@ -55,10 +55,11 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
             formatter: '{a} <br/>{b} : {c} ({d}%)',
         },
         legend: {
-            orient: 'vertical',
+            orient: 'horizontal',
+            type: "scroll",
             left: 'left',
             data: Array.isArray(col) ? col : [],
-            show: showLabels,
+            show: true,
         },
         series: [
             {
@@ -87,6 +88,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                     length: 30
                 },
                 label: {
+                    show: showLabels,
                     formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}% ',
                     backgroundColor: '#F6F8FC',
                     borderColor: '#8C8D8E',
