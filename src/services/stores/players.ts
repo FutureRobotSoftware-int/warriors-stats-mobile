@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import type { IPlayer } from "../../types/player";
 import { loadShotData } from "../data/dataLoader";
+import { useGraphFilters } from "./graphFilters";
 
 export const usePlayers = defineStore('players', {
     state: (): { players: IPlayer[]; nextId: number } => ({
@@ -31,6 +32,10 @@ export const usePlayers = defineStore('players', {
             this.players.forEach(p => {
                 p.isSelected = (p.id === player.id);
             });
+
+            const graphStore = useGraphFilters();
+
+            graphStore.clearAll();
 
             loadShotData(player.data);
 

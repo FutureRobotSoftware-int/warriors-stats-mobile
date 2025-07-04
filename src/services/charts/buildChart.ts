@@ -28,11 +28,11 @@ function getColor(name: string): string {
         'Stationary': '#9eb9f3',
         //Pass Direction
         'From Hoop': '#f89c74',
-        'N/A Off Dribble': '##1f78b4',
+        'N/A Off Dribble': '#2c9ec5',
         //Off Dribble hand
         'Left to RightPickUp': '#87c55f',
         'Right to LeftPickup': '#9eb9f3',
-        'N/A': '#1f78b4',
+        'N/A': '#2c9ec5',
         //Hop/1-2
         'Hop  ': '#66c5cc',
         '1-2 Right/Left': '#f6cf71',
