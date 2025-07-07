@@ -1,5 +1,5 @@
 <template>
-  <div class="drawer relative">
+  <div class="drawer drawer-end relative">
     <input id="my-drawer" type="checkbox" class="drawer-toggle" />
     <div class="drawer-content fixed right-5 bottom-5">
       <!-- Page content here -->
