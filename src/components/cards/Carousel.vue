@@ -16,10 +16,19 @@ const filteredEntries = computed(() =>
 const metrics = [
   { title: 'Overall FG%', method: 'calcFG', suffix: '%' },
   { title: 'Overall PPP', method: 'calcPPP' },
-  { title: 'Preferred Off. Dribble Hand', method: 'getMostCommonColumnValue', args: ['Off Dribble Hand'] },
+  { title: 'Preferred Dribble Hand', method: 'getMostCommonColumnValue', args: ['Off Dribble Hand'] },
   { title: 'Preferred Footwork', method: 'getMostCommonColumnValue', args: ['Hop/1-2'] },
   { title: 'Preferred Off.', method: 'getMostCommonColumnValue', args: ['Offensive Action'] },
-  { title: 'Most common Defender Distance', method: 'getMostCommonColumnValue', args: ['Defender Distance'] },
+  { title: 'Frequent Def. Distance', method: 'getMostCommonColumnValue', args: ['Defender Distance'] },
+]
+
+const metricsInMode = [
+  { title: 'Overall FG%', method: 'calcFG', suffix: '%' },
+  { title: 'Overall PPP', method: 'calcPPP' },
+  { title: 'Preferred Dribble Hand', method: 'getMostCommonColumnValue', args: ['Off Dribble Hand'] },
+  { title: 'Preferred Footwork', method: 'getMostCommonColumnValue', args: ['Hop/1-2'] },
+  { title: 'Preferred Off.', method: 'getMostCommonColumnValue', args: ['Offensive Action'] },
+  { title: 'Frequent Def. Distance', method: 'getMostCommonColumnValue', args: ['Defender Distance'] },
 ]
 
 const statCards = computed(() =>

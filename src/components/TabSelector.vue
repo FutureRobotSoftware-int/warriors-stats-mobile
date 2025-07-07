@@ -9,7 +9,7 @@ const selected = ref(0)
 </script>
 
 <template>
-    <div class="flex h-[calc(85dvh-4rem)] border border-gray-200 rounded-lg overflow-hidden m-2">
+    <div class="flex h-[calc(90dvh-4rem)] border border-gray-200 rounded-lg overflow-hidden m-2">
       <div class="flex flex-col bg-base-200">
         <button
           v-for="(tab, idx) in tabs"

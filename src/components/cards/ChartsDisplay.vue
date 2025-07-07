@@ -54,7 +54,7 @@ const enrichedData = computed(() =>
 
 <template>
 
-  <diV class="flex flex-wrap">
+  <div class="flex flex-wrap">
     <FlippableCard
       v-for="(chart, index) in enrichedData"
       :key="index"
@@ -64,5 +64,5 @@ const enrichedData = computed(() =>
       :fieldKey="chart.args[0]"
       class="m-1"
     />
-  </diV>
+  </div>
 </template>

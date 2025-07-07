@@ -48,25 +48,44 @@ function getColor(name: string): string {
 
 export function buildChartOption({ title, values, fg, col }: IChartOptions, showLabels = true) {
 
+    let legends = {};
+
+    if (!showLabels) {
+        legends = {
+            type: 'scroll',
+            orient: 'horizontal',
+            bottom: 0,
+            align: 'auto',
+            itemGap: 10,
+            data: Array.isArray(col) ? col : [],
+            pageButtonItemGap: 1,
+            pageButtonGap: 1,
+            pageIconSize: 12,
+        }
+    } else {
+        legends = {
+            orient: 'vertical',
+            type: "scroll",
+            left: 'left',
+            data: Array.isArray(col) ? col : [],
+            show: true,
+        }
+    }
+
     return {
         title: { text: title, left: 'center', show: false },
         tooltip: {
             trigger: 'item',
             formatter: '{a} <br/>{b} : {c} ({d}%)',
         },
-        legend: {
-            orient: 'horizontal',
-            type: "scroll",
-            left: 'left',
-            data: Array.isArray(col) ? col : [],
-            show: true,
-        },
+        legend: legends,
         series: [
             {
                 name: 'Frequency',
                 type: 'pie',
                 selectedMode: 'single',
                 radius: [0, '40%'],
+                center: ['50%', '40%'],
                 label: {
                     show: true,
                     position: 'inner',
@@ -84,6 +103,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 name: 'FG%',
                 type: 'pie',
                 radius: ['50%', '65%'],
+                center: ['50%', '40%'],
                 labelLine: {
                     length: 30
                 },
