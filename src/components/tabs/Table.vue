@@ -10,7 +10,7 @@ console.log(entries)
 </script>
 
 <template>
-  <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
+  <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
     <table class="table table-zebra table-xs w-full">
       <thead>
         <tr>

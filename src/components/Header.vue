@@ -4,12 +4,15 @@ import { onMounted, ref } from 'vue'
 import { usePlayers } from '../services/stores/players'
 import { loadPlayers } from '../services/data/dataLoader'
 import { usePeriod } from '../services/stores/year'
+import { useShotData } from '../services/stores/shotData'
 
 const periodStore = usePeriod()
 const selectedPeriodId = ref<number | ''>('')
 
 const selectedPlayerId = ref<number | ''>('')
 const playersStore = usePlayers()
+
+const shotDataStore = useShotData()
 
 onMounted(async () => {
     await loadPlayers()
@@ -37,11 +40,15 @@ function handlePlayerChange() {
   }
 }
 
+function handleModeChange() {
+    // shotDataStore
+}
+
 </script>
 
 <template>
     <header class="bg-primary p-0 text-white font-medium">
-        <p class="absolute">v.0.1.2</p>
+        <p class="absolute">v.0.1.3</p>
         <div class="flex items-center justify-between mx-24">
             <div class="mx-4">
                 <img src="../assets/i-1193632972.png" class="size-12">
@@ -75,6 +82,7 @@ function handlePlayerChange() {
             </div>
             <div class="mx-4">
                 <select
+                    @change="handleModeChange"
                     class="select select-md rounded-full border-base-100 bg-primary w-fit border-2 focus:outline-base-100"
                 >
                     <option value="">-- Select a mode --</option>

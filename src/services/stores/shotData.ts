@@ -89,6 +89,47 @@ export const useShotData = defineStore('shotData', {
             return sample ?? null;
         },
 
+        getLeastEffectiveColumnValue<T extends keyof IShotData>(
+            this: { entries: IShotData[] },
+            col: T,
+            dataset?: IShotData[]
+        ): IShotData[T] | null {
+            const data = dataset ?? this.entries;
+            if (data.length === 0) return null;
+
+            const grouped = new Map<string, { makes: number; total: number; sample: IShotData[T] }>();
+
+            for (const entry of data) {
+                const key = String(entry[col]);
+                const result = String(entry["Make/Miss"]).trim();
+                const sample = entry[col];
+
+                if (!grouped.has(key)) {
+                    grouped.set(key, { makes: 0, total: 0, sample });
+                }
+
+                const group = grouped.get(key)!;
+                group.total += 1;
+                if (result === "Make") {
+                    group.makes += 1;
+                }
+            }
+
+            let minFG = Infinity;
+            let leastEffective: IShotData[T] | null = null;
+
+            for (const { makes, total, sample } of grouped.values()) {
+                const fg = total > 0 ? makes / total : 0;
+                if (fg < minFG) {
+                    minFG = fg;
+                    leastEffective = sample;
+                }
+            }
+
+            return leastEffective;
+        },
+
+
         calcFG(this: { entries: IShotData[] }, dataset?: IShotData[]): string {
             const data = dataset ?? this.entries;
 
