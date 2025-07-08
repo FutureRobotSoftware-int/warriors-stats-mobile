@@ -4,10 +4,14 @@ export const useGraphFilters = defineStore('graphFilters', {
     state: () => ({
         selectedFilters: {} as Record<string, string>,
         hiddenCategories: {} as Record<string, Set<string>>,
-        activeSource: null as string | null
+        activeSource: null as string | null,
+        mode: 'general' as 'general' | 'inefficiencies'
     }),
 
     actions: {
+        setMode(newMode: 'general' | 'inefficiencies') {
+            this.mode = newMode;
+        },
         setFilter(field: string, value: string) {
             if (this.selectedFilters[field] === value) {
                 delete this.selectedFilters[field]
@@ -42,6 +46,12 @@ export const useGraphFilters = defineStore('graphFilters', {
             this.selectedFilters = {}
             this.hiddenCategories = {}
             this.activeSource = null
+        },
+        clearAllGeneral() {
+            this.selectedFilters = {}
+            this.hiddenCategories = {}
+            this.activeSource = null
+            this.mode = 'general'
         }
     }
 })

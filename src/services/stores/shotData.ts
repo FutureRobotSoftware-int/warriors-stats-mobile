@@ -5,7 +5,7 @@ import { useGraphFilters } from "./graphFilters";
 export const useShotData = defineStore('shotData', {
     state: (): { entries: IShotData[]; nextId: number } => ({
         entries: [],
-        nextId: 0,
+        nextId: 1,
     }),
     getters: {
         getAll(state) {
@@ -37,7 +37,7 @@ export const useShotData = defineStore('shotData', {
     actions: {
         clearData() {
             this.entries = [];
-            this.nextId = 0;
+            this.nextId = 1;
         },
 
         addData(newEntry: Omit<IShotData, 'id'>[]) {
@@ -321,6 +321,35 @@ export const useShotData = defineStore('shotData', {
 
                 return true
             })
-        }
+        },
+
+        getInefficiencyByColumn<T extends keyof IShotData>(
+            col: T,
+            dataset?: IShotData[]
+        ): { name: string; value: number }[] {
+            const grouped: Record<string, { misses: number; total: number }> = {};
+            const data = dataset ?? this.entries;
+
+            data.forEach(entry => {
+                const key = String(entry[col]);
+                const result = String(entry["Make/Miss"]).trim();
+
+                if (!key) return;
+
+                if (!grouped[key]) {
+                    grouped[key] = { misses: 0, total: 0 };
+                }
+
+                grouped[key].total += 1;
+                if (result === "Miss") {
+                    grouped[key].misses += 1;
+                }
+            });
+
+            return Object.entries(grouped).map(([name, { misses, total }]) => {
+                const inefficiency = total > 0 ? Math.round((misses / total) * 100) : 0;
+                return { name, value: inefficiency };
+            });
+        },
     }
 })

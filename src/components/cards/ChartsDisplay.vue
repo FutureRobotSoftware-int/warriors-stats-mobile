@@ -19,6 +19,8 @@ defineProps({
 const shotDataStore = useShotData()
 const filters = useGraphFilters()
 
+const mode = computed(() => filters.mode)
+
 const metrics = [
   { title: 'Area', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Area'] },
   { title: 'Player Direction', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Player Direction'] },
@@ -33,12 +35,18 @@ const filteredEntries = (fieldKey) =>
   shotDataStore.getFilteredEntries(filters.selectedFilters, filters.hiddenCategories, fieldKey, false)
 
 
-const enrichedData = computed(() =>
+  const enrichedData = computed(() =>
   metrics.map((metric) => {
     const fieldKey = metric.args[0]
-    const values = shotDataStore[metric.data](...metric.args, filteredEntries(fieldKey))
-    const fg = shotDataStore[metric.fieldGoal](...metric.args, filteredEntries(fieldKey))
-    const col = shotDataStore[metric.legend](...metric.args, filteredEntries(fieldKey))
+    const dataset = filteredEntries(fieldKey)
+
+    const values = shotDataStore[metric.data](...metric.args, dataset)
+    const fg =
+      mode.value === 'inefficiencies'
+        ? shotDataStore.getInefficiencyByColumn(...metric.args, dataset)
+        : shotDataStore.getFGByColumn(...metric.args, dataset)
+
+    const col = shotDataStore[metric.legend](...metric.args, dataset)
 
     const option = buildChartOption({ title: metric.title, values, fg, col }, false)
     const altOption = buildChartOption({ title: metric.title, values, fg, col }, true)
@@ -50,6 +58,7 @@ const enrichedData = computed(() =>
     }
   })
 )
+
 </script>
 
 <template>
@@ -64,5 +73,21 @@ const enrichedData = computed(() =>
       :fieldKey="chart.args[0]"
       class="m-1"
     />
+    <div class="relative m-1">
+        <div class="card bg-base-100 shadow-sm h-78 w-66 perspective overflow-hidden">
+            <div class="relative h-full w-full transition-transform duration-500 transform-style-preserve-3d">
+              <div class="absolute inset-0 backface-hidden">
+                <div class="h-full card-body text-center p-1">
+                    <div class="flex items-center justify-center">
+                        <h2 class="text-xl font-semibold">Video</h2>
+                    </div>
+                    <button class="btn">
+                      See matching videos
+                    </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
   </div>
 </template>

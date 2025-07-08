@@ -19,7 +19,7 @@
 import { ref } from 'vue';
 import ExpandedView from './ExpandedView.vue';
 import CardFront from './CardFront.vue';
-import CardBack from './CardBack.vue';
+import CardBack from '../../legacy/CardBack.vue';
 import BaseChart from './BaseChart.vue';
 
 const isExpanded = ref(false);
