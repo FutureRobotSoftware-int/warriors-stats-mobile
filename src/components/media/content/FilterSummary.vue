@@ -3,7 +3,7 @@
         class="">
           <h2 class="text-xl font-semibold mb-3">Resume</h2>
       
-          <p class="mb-3 text-base">
+          <p class="text-base">
             <strong class="">Active Entries: </strong>
             <span class="font-mono">{{ filteredCount }}/{{ totalCount }}</span>
           </p>
