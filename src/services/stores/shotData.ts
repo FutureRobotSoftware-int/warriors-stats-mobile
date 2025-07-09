@@ -32,6 +32,24 @@ export const useShotData = defineStore('shotData', {
 
                 return true;
             });
+        },
+        getActiveIds(state): number[] {
+            const graphFilters = useGraphFilters();
+            const activeEntries = state.entries.filter(entry => {
+                const filters = graphFilters.selectedFilters;
+                const hidden = graphFilters.hiddenCategories;
+
+                for (const [key, value] of Object.entries(filters)) {
+                    if (entry[key as keyof IShotData] !== value) return false;
+                }
+
+                for (const [field, hiddenSet] of Object.entries(hidden)) {
+                    if (hiddenSet.has(String(entry[field as keyof IShotData]))) return false;
+                }
+
+                return true;
+            });
+            return activeEntries.map((entry) => (entry.id))
         }
     },
     actions: {

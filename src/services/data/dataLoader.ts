@@ -1,5 +1,5 @@
-import { parseCSV } from "../csvService";
-import { formatToSlug } from "../formatter";
+import { parseCSV } from "../utils/csvService";
+import { formatToSlug } from "../utils/formatter";
 import type { IPlayer } from "../../types/player";
 import { usePlayers } from "../stores/players";
 import { useShotData } from "../stores/shotData";

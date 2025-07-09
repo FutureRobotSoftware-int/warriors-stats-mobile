@@ -1,5 +1,5 @@
 <template>
-    <div class="card card-border bg-base-100 text-center mx-2">
+    <div class="card card-border bg-base-100 text-center min-w-[200px]">
         <div class="card-body py-1 px-2">
             <h2 class="font-medium text-sm">{{ title }}</h2>
             <p class="text-lg font-bold">{{ stat }}</p>

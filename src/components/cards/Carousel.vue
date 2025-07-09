@@ -54,7 +54,7 @@ const statCards = computed(() =>
 }
 .embla__container {
   display: flex;
-  justify-content: space-around;
+  gap: 0.5rem; 
 }
 .embla__slide {
   flex: 0 0 100%;
