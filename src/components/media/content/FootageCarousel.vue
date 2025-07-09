@@ -38,13 +38,13 @@ const driveVideoUrls = computed(() =>
     .map(id => getGoogleDriveVideoUrl(googleDriveIds[id])) 
 )
   
-  console.log(getGoogleDriveVideoUrl(googleDriveIds.video1))
+  console.log(driveVideoUrls)
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false })
   
   onMounted(() => {
     if (emblaApi.value) {
-      console.log('Carrusel iniciado con', emblaApi.value.slideNodes().length, 'slides')
+      console.log('Carousel initialized with', emblaApi.value.slideNodes().length, 'slides')
     }
   })
   </script>

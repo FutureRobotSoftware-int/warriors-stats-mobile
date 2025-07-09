@@ -11,6 +11,7 @@
         </div>
 
         <ExpandedView v-if="isExpanded" title="Game Footage" @close="isExpanded = false">
+          <FootageCarousel />
         </ExpandedView>
     </div>
 </template>
@@ -19,6 +20,7 @@
 import FilterSummary from './content/FilterSummary.vue';
 import ExpandedView from '../cards/chartCard/ExpandedView.vue';
 import { ref } from 'vue';
+import FootageCarousel from './content/FootageCarousel.vue';
 
 const isExpanded = ref(false);
 </script>
