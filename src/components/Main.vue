@@ -5,7 +5,6 @@
         <div>
             <TabSelector />
         </div>
-        <FilterSummary />
         
     </main>
 </template>
@@ -16,7 +15,6 @@ import ChatsDisplay from './cards/ChartsDisplay.vue';
 import { useShotData } from '../services/stores/shotData';
 import { onMounted } from 'vue';
 import { loadShotData } from '../services/data/dataLoader';
-import FilterSummary from './FilterSummary.vue';
 import { usePeriod } from '../services/stores/year';
 import TabSelector from './TabSelector.vue';
 

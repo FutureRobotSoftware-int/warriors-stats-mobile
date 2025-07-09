@@ -8,6 +8,7 @@ import CardFront from './chartCard/CardFront.vue'
 import BaseChart from './chartCard/BaseChart.vue'
 import ExpandedView from './chartCard/ExpandedView.vue'
 import { ref } from 'vue';
+import FilterCard from '../media/FilterCard.vue'
 
 defineProps({
     title: String,
@@ -73,21 +74,6 @@ const filteredEntries = (fieldKey) =>
       :fieldKey="chart.args[0]"
       class="m-1"
     />
-    <div class="relative m-1">
-        <div class="card bg-base-100 shadow-sm h-78 w-66 perspective overflow-hidden">
-            <div class="relative h-full w-full transition-transform duration-500 transform-style-preserve-3d">
-              <div class="absolute inset-0 backface-hidden">
-                <div class="h-full card-body text-center p-1">
-                    <div class="flex items-center justify-center">
-                        <h2 class="text-xl font-semibold">Video</h2>
-                    </div>
-                    <button class="btn">
-                      See matching videos
-                    </button>
-                </div>
-            </div>
-            </div>
-        </div>
-    </div>
+    <FilterCard />
   </div>
 </template>
