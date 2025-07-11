@@ -12,9 +12,13 @@ console.log(entries)
 <template>
   <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
     <table class="table table-zebra table-xs w-full">
-      <thead>
+      <thead class="sticky top-0 bg-base-200 z-10">
         <tr>
-          <th v-for="key in Object.keys(entries[0] || {})" :key="key" class="text-xs">
+          <th
+            v-for="key in Object.keys(entries[0] || {})"
+            :key="key"
+            class="text-xs"
+          >
             {{ key }}
           </th>
         </tr>
