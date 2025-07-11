@@ -60,6 +60,14 @@ export const useGraphFilters = defineStore('graphFilters', {
             this.hiddenCategories = {}
             this.activeSource = null
             this.mode = 'general'
+        },
+        clearFilter(field: string) {
+            if (this.selectedFilters[field]) {
+                delete this.selectedFilters[field];
+                if (this.activeSource === field) {
+                    this.activeSource = null;
+                }
+            }
         }
     }
 })
