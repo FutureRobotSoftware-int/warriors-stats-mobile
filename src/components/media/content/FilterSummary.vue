@@ -11,8 +11,11 @@
           <div v-if="hasFilters" class="mb-4">
             <p class="font-semibold">Current Filters:</p>
             <ul class="list-disc list-inside text-sm mt-1">
-              <li v-for="(value, key) in selectedFilters" :key="key">
-                {{ key }}: <span class="font-mono">{{ value }}</span>
+              <li v-for="(valueSet, key) in selectedFilters" :key="key">
+                {{ key }}:
+                <span class="font-mono">
+                  {{ Array.from(valueSet).join(', ') }}
+                </span>
               </li>
             </ul>
           </div>

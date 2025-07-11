@@ -52,6 +52,8 @@ const filteredEntries = (fieldKey) =>
     const option = buildChartOption({ title: metric.title, values, fg, col }, false)
     const altOption = buildChartOption({ title: metric.title, values, fg, col }, true)
 
+    
+
     return {
       ...metric,
       option,

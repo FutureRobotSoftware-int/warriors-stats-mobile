@@ -18,12 +18,14 @@ export const useShotData = defineStore('shotData', {
             state.entries.filter(entry => entry["Make/Miss"].trim() === value),
         getActiveEntries(state): IShotData[] {
             const graphFilters = useGraphFilters();
+
             return state.entries.filter(entry => {
                 const filters = graphFilters.selectedFilters;
                 const hidden = graphFilters.hiddenCategories;
 
-                for (const [key, value] of Object.entries(filters)) {
-                    if (entry[key as keyof IShotData] !== value) return false;
+                for (const [key, valueSet] of Object.entries(filters)) {
+                    const val = String(entry[key as keyof IShotData]);
+                    if (!valueSet.has(val)) return false;
                 }
 
                 for (const [field, hiddenSet] of Object.entries(hidden)) {
@@ -35,22 +37,27 @@ export const useShotData = defineStore('shotData', {
         },
         getActiveIds(state): number[] {
             const graphFilters = useGraphFilters();
+
             const activeEntries = state.entries.filter(entry => {
                 const filters = graphFilters.selectedFilters;
                 const hidden = graphFilters.hiddenCategories;
 
-                for (const [key, value] of Object.entries(filters)) {
-                    if (entry[key as keyof IShotData] !== value) return false;
+                for (const [key, valueSet] of Object.entries(filters)) {
+                    const val = String(entry[key as keyof IShotData]);
+                    if (!valueSet.has(val)) return false;
                 }
 
                 for (const [field, hiddenSet] of Object.entries(hidden)) {
-                    if (hiddenSet.has(String(entry[field as keyof IShotData]))) return false;
+                    const val = String(entry[field as keyof IShotData]);
+                    if (hiddenSet.has(val)) return false;
                 }
 
                 return true;
             });
-            return activeEntries.map((entry) => (entry.id))
+
+            return activeEntries.map(entry => entry.id);
         }
+
     },
     actions: {
         clearData() {
@@ -322,15 +329,16 @@ export const useShotData = defineStore('shotData', {
 
 
         getFilteredEntries(
-            filters: Record<string, string>,
+            filters: Record<string, Set<string>>,
             hidden: Record<string, Set<string>>,
             ignoredField: string | null = null,
             ignoreSelf: boolean = true
         ) {
             return this.entries.filter(entry => {
-                for (const [key, value] of Object.entries(filters)) {
+                for (const [key, valueSet] of Object.entries(filters)) {
                     if (ignoreSelf && key === ignoredField) continue
-                    if (entry[key as keyof IShotData] !== value) return false
+                    const val = String(entry[key as keyof IShotData])
+                    if (!valueSet.has(val)) return false
                 }
 
                 for (const [field, hiddenSet] of Object.entries(hidden)) {

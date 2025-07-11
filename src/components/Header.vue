@@ -1,59 +1,66 @@
 <script setup lang="ts">
-
-import { onMounted, ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { usePlayers } from '../services/stores/players'
-import { loadPlayers } from '../services/data/dataLoader'
 import { usePeriod } from '../services/stores/year'
-import { watch } from 'vue'
 import { useGraphFilters } from '../services/stores/graphFilters'
-
-const graphFiltersStore = useGraphFilters()
-
-const periodStore = usePeriod()
-const selectedPeriodId = ref<number | ''>('')
+import { useShotData } from '../services/stores/shotData'
+import { loadPlayers } from '../services/data/dataLoader'
 
 const selectedPlayerId = ref<number | ''>('')
+const selectedPeriodId = ref<number | ''>('')
+const selectedMode = ref<'general' | 'most-common'>('general') // tipado desde el inicio
+
 const playersStore = usePlayers()
+const periodStore = usePeriod()
+const graphFiltersStore = useGraphFilters()
+const shotDataStore = useShotData()
 
-const selectedMode = ref<string>('')
+watch(selectedMode, (mode) => {
+  console.log('Mode changed to:', mode)
+  graphFiltersStore.setMode(mode)
 
-watch(selectedMode, (newMode) => {
-  console.log('Mode changed to:', newMode)
-  graphFiltersStore.setMode(newMode as 'general' | 'inefficiencies')
-
-  if (newMode === 'general') {
+  if (mode === 'general') {
     graphFiltersStore.clearAllGeneral()
   }
+
+  if (mode === 'most-common') {
+    graphFiltersStore.clearAll()
+
+    const commonOffensive = shotDataStore.getMostCommonColumnValue('Offensive Action')
+    const defaultAreas = ['Left Wing', 'Right Wing']
+
+    if (commonOffensive) {
+        graphFiltersStore.setFilter('Offensive Action', commonOffensive)
+    }
+
+    defaultAreas.forEach(area => {
+        graphFiltersStore.setFilter('Area', area)
+    })
+    }
 })
 
-
-
 onMounted(async () => {
-    await loadPlayers()
-    if (playersStore.players.length > 0) {
-        selectedPlayerId.value = playersStore.players[0].id
-    }
+  await loadPlayers()
 
-    if (periodStore.periods.length > 0) {
-        selectedPeriodId.value = periodStore.periods[0].id
-        periodStore.selectPeriod(periodStore.periods[0])
-    }
+  const firstPlayer = playersStore.players[0]
+  if (firstPlayer) selectedPlayerId.value = firstPlayer.id
+
+  const firstPeriod = periodStore.periods[0]
+  if (firstPeriod) {
+    selectedPeriodId.value = firstPeriod.id
+    periodStore.selectPeriod(firstPeriod)
+  }
 })
 
 function handlePeriodChange() {
   const selected = periodStore.periods.find(p => p.id === selectedPeriodId.value)
-  if (selected) {
-    periodStore.selectPeriod(selected)
-  }
+  if (selected) periodStore.selectPeriod(selected)
 }
 
 function handlePlayerChange() {
-  const selected = playersStore.players.find(p => p.id === selectedPlayerId.value);
-  if (selected) {
-    playersStore.selectPlayer(selected);
-  }
+  const selected = playersStore.players.find(p => p.id === selectedPlayerId.value)
+  if (selected) playersStore.selectPlayer(selected)
 }
-
 </script>
 
 <template>
@@ -97,7 +104,7 @@ function handlePlayerChange() {
                 >
                     <option value="">-- Select a mode --</option>
                     <option value="general" class="lg:text-sm">General</option>
-                    <option value="inefficiencies" class="lg:text-sm">Inefficiencies</option>
+                    <option value="most-common" class="lg:text-sm">Most Common</option>
                 </select>
             </div>
         </div>

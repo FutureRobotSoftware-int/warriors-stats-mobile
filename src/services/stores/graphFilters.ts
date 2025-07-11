@@ -2,30 +2,38 @@ import { defineStore } from 'pinia'
 
 export const useGraphFilters = defineStore('graphFilters', {
     state: () => ({
-        selectedFilters: {} as Record<string, string>,
+        selectedFilters: {} as Record<string, Set<string>>,
         hiddenCategories: {} as Record<string, Set<string>>,
         activeSource: null as string | null,
-        mode: 'general' as 'general' | 'inefficiencies'
+        mode: 'general' as 'general' | 'most-common'
     }),
 
     actions: {
-        setMode(newMode: 'general' | 'inefficiencies') {
+        setMode(newMode: 'general' | 'most-common') {
             this.mode = newMode;
         },
         setFilter(field: string, value: string) {
-            if (this.selectedFilters[field] === value) {
-                delete this.selectedFilters[field]
-                if (this.activeSource === field) this.activeSource = null
-            } else {
-                this.selectedFilters[field] = value
-                this.activeSource = field
+            if (!this.selectedFilters[field]) {
+                this.selectedFilters[field] = new Set();
             }
-            console.log(this.selectedFilters)
-        },
 
-        clearFilter(field: string) {
-            delete this.selectedFilters[field]
-            if (this.activeSource === field) this.activeSource = null
+            if (this.selectedFilters[field].has(value)) {
+                this.selectedFilters[field].delete(value);
+                if (this.selectedFilters[field].size === 0) {
+                    delete this.selectedFilters[field];
+                    if (this.activeSource === field) this.activeSource = null;
+                }
+            } else {
+                this.selectedFilters[field].add(value);
+                this.activeSource = field;
+            }
+
+            console.log('Filtros actuales:', JSON.stringify(
+                Object.fromEntries(
+                    Object.entries(this.selectedFilters).map(([k, v]) => [k, Array.from(v)])
+                ),
+                null, 2
+            ));
         },
 
         toggleCategoryVisibility(field: string, category: string) {
