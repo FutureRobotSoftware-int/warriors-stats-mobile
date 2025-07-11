@@ -7,15 +7,14 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
 
     if (!showLabels) {
         legends = {
-            type: 'scroll',
+            type: 'plain',
             orient: 'horizontal',
-            bottom: 0,
-            align: 'auto',
-            itemGap: 10,
-            data: Array.isArray(col) ? col : [],
-            pageButtonItemGap: 1,
-            pageButtonGap: 1,
-            pageIconSize: 12,
+            top: 'bottom',
+            itemGap: 12,
+            itemWidth: 18,
+            textStyle: {
+                fontSize: 12
+            }
         }
     } else {
         legends = {
@@ -53,7 +52,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 label: {
                     show: true,
                     position: 'inner',
-                    fontSize: 14,
+                    fontSize: 10,
                     formatter: (params: any) => {
                         const abbrev = getAbbreviation(params.name);
                         return `${abbrev}`;
@@ -81,7 +80,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                         const fgValue = params.value;
                         const freq = params.data.frequencyValue;
 
-                        return `{a|${params.name}}{abg|}\n{hr|}\n  {b|Field Goal %}: ${fgValue}%\n  {b|Frequency}: ${freq}`;
+                        return `{a|${params.name}}{abg|}\n{hr|}\n {b|Field Goal}: ${fgValue}%\n {b|Frequency}: ${freq}`;
                     },
                     backgroundColor: '#F6F8FC',
                     borderColor: '#8C8D8E',
