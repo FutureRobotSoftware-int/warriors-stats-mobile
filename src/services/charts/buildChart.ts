@@ -1,50 +1,5 @@
 import type { IChartOptions } from "../../types/chartOptions"
-import type { IShotData } from "../../types/shotData";
-
-function getColor(name: string): string {
-    const COLOR_MAP: Record<string, string> = {
-        //Offensive moves
-        'DHO': '#66c5cc',
-        'Drive Kick': '#f6cf71',
-        'Flare': '#f89c74',
-        'Iso': '#dcb0f2',
-        'Lift': '#87c55f',
-        'Pin Down': '#9eb9f3',
-        'PnPop': '#fe88b1',
-        'PnR': '#c9db74',
-        'Post Kick Out': '#8be0a4',
-        'Spot Up': '#b497e7',
-        //Area
-        'Left Corner': '#66c5cc',
-        'Left Wing': '#f6cf71',
-        'Top': '#f89c74',
-        'Right Wing': '#dcb0f2',
-        'Right Corner': '#87c55f',
-        //Player Direction
-        'Left': '#66c5cc',
-        'Right': '#f6cf71',
-        'To Hoop': '#dcb0f2',
-        'Away From Hoop': '#87c55f',
-        'Stationary': '#9eb9f3',
-        //Pass Direction
-        'From Hoop': '#f89c74',
-        'N/A Off Dribble': '#2c9ec5',
-        //Off Dribble hand
-        'Left to RightPickUp': '#87c55f',
-        'Right to LeftPickup': '#9eb9f3',
-        'N/A': '#2c9ec5',
-        //Hop/1-2
-        'Hop  ': '#66c5cc',
-        '1-2 Right/Left': '#f6cf71',
-        '1-2 Left/Right': '#f89c74',
-        //Defender Distance
-        'Tight': '#66c5cc',
-        'Close': '#f6cf71',
-        'Open': '#f89c74',
-        'Wide Open': '#87c55f',
-    };
-    return COLOR_MAP[name] || '#b3b3b3';
-}
+import { getColor, getAbbreviation } from "./dataProcessor";
 
 export function buildChartOption({ title, values, fg, col }: IChartOptions, showLabels = true) {
 
@@ -76,7 +31,15 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
         title: { text: title, left: 'center', show: false },
         tooltip: {
             trigger: 'item',
-            formatter: '{a} <br/>{b} : {c} ({d}%)',
+            formatter: (params: any) => {
+                const { seriesName, name, value, percent } = params;
+                if (seriesName === 'Frequency') {
+                    return `${name}: ${value} (${percent}%)`;
+                } else if (seriesName === 'FG%') {
+                    return `${seriesName}<br/>${name}: ${value}%`;
+                }
+                return `${name}: ${value}`;
+            }
         },
         legend: legends,
         series: [
@@ -89,7 +52,11 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 label: {
                     show: true,
                     position: 'inner',
-                    fontSize: 14
+                    fontSize: 14,
+                    formatter: (params: any) => {
+                        const abbrev = getAbbreviation(params.name);
+                        return `${abbrev}`;
+                    },
                 },
                 labelLine: {
                     show: true
@@ -109,7 +76,12 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 },
                 label: {
                     show: showLabels,
-                    formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}% ',
+                    formatter: (params: any) => {
+                        const fgValue = params.value;
+                        const freq = params.data.frequencyValue;
+
+                        return `{a|${params.name}}{abg|}\n{hr|}\n  {b|Field Goal %}: ${fgValue}%\n  {b|Frequency}: ${freq}`;
+                    },
                     backgroundColor: '#F6F8FC',
                     borderColor: '#8C8D8E',
                     borderWidth: 1,
@@ -117,9 +89,10 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
 
                     rich: {
                         a: {
-                            color: '#6E7079',
+                            color: '#4C5058',
                             lineHeight: 22,
-                            align: 'center'
+                            fontWeight: 'bold',
+                            align: 'center',
                         },
                         hr: {
                             borderColor: '#8C8D8E',
@@ -128,23 +101,29 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                             height: 0
                         },
                         b: {
-                            color: '#4C5058',
+                            color: '#6E7079',
                             fontSize: 14,
                             fontWeight: 'bold',
-                            lineHeight: 33
+                            lineHeight: 33,
+                            align: 'left'
                         },
                         per: {
                             color: '#fff',
-                            backgroundColor: '#4C5058',
+                            backgroundColor: '#6E7079',
                             padding: [3, 4],
-                            borderRadius: 4
+                            borderRadius: 4,
+                            align: 'left'
                         }
                     }
                 },
-                data: (fg as { name: string; value: number }[]).map(v => ({
-                    ...v,
-                    itemStyle: { color: getColor(v.name) }
-                }))
+                data: (fg as { name: string; value: number }[]).map(v => {
+                    const freq = (values as { name: string; value: number }[]).find(f => f.name === v.name)?.value || 0;
+                    return {
+                        ...v,
+                        frequencyValue: freq,
+                        itemStyle: { color: getColor(v.name) }
+                    }
+                })
             }
         ],
     }
@@ -210,97 +189,97 @@ export function buildBarChartOption(
     };
 }
 
-export function buildZoneChartOption(entries: IShotData[]) {
-    const courtZones = [
-        { name: 'Left Corner', x: 50, y: 240, color: '#4fc3f7' },
-        { name: 'Left Wing', x: 100, y: 160, color: '#81c784' },
-        { name: 'Center', x: 200, y: 120, color: '#fff176' },
-        { name: 'Right Wing', x: 300, y: 160, color: '#ffb74d' },
-        { name: 'Right Corner', x: 350, y: 240, color: '#e57373' },
-    ];
+// export function buildZoneChartOption(entries: IShotData[]) {
+//     const courtZones = [
+//         { name: 'Left Corner', x: 50, y: 240, color: '#4fc3f7' },
+//         { name: 'Left Wing', x: 100, y: 160, color: '#81c784' },
+//         { name: 'Center', x: 200, y: 120, color: '#fff176' },
+//         { name: 'Right Wing', x: 300, y: 160, color: '#ffb74d' },
+//         { name: 'Right Corner', x: 350, y: 240, color: '#e57373' },
+//     ];
 
-    const totalEntries = entries.length;
-    const areaMap = new Map<
-        string,
-        { [action: string]: { makes: number; total: number } }
-    >();
+//     const totalEntries = entries.length;
+//     const areaMap = new Map<
+//         string,
+//         { [action: string]: { makes: number; total: number } }
+//     >();
 
-    for (const entry of entries) {
-        const area = entry.Area;
-        const action = entry['Offensive Action'];
-        const result = entry['Make/Miss'];
+//     for (const entry of entries) {
+//         const area = entry.Area;
+//         const action = entry['Offensive Action'];
+//         const result = entry['Make/Miss'];
 
-        if (!area || !action) continue;
+//         if (!area || !action) continue;
 
-        if (!areaMap.has(area)) areaMap.set(area, {});
-        const actions = areaMap.get(area)!;
+//         if (!areaMap.has(area)) areaMap.set(area, {});
+//         const actions = areaMap.get(area)!;
 
-        if (!actions[action]) actions[action] = { makes: 0, total: 0 };
+//         if (!actions[action]) actions[action] = { makes: 0, total: 0 };
 
-        actions[action].total += 1;
-        if (result.trim() === 'Make') actions[action].makes += 1;
-    }
+//         actions[action].total += 1;
+//         if (result.trim() === 'Make') actions[action].makes += 1;
+//     }
 
-    const labels = [];
+//     const labels = [];
 
-    for (const zone of courtZones) {
-        const areaData = areaMap.get(zone.name);
+//     for (const zone of courtZones) {
+//         const areaData = areaMap.get(zone.name);
 
-        if (!areaData) continue;
+//         if (!areaData) continue;
 
-        const topAction = Object.entries(areaData).reduce((a, b) =>
-            a[1].total >= b[1].total ? a : b
-        );
+//         const topAction = Object.entries(areaData).reduce((a, b) =>
+//             a[1].total >= b[1].total ? a : b
+//         );
 
-        const [actionName, { makes, total }] = topAction;
-        const fg = total > 0 ? Math.round((makes / total) * 100) : 0;
-        const freq = total > 0 ? Math.round((total / totalEntries) * 100) : 0;
+//         const [actionName, { makes, total }] = topAction;
+//         const fg = total > 0 ? Math.round((makes / total) * 100) : 0;
+//         const freq = total > 0 ? Math.round((total / totalEntries) * 100) : 0;
 
-        labels.push({
-            ...zone,
-            action: actionName,
-            fg,
-            freq,
-        });
-    }
+//         labels.push({
+//             ...zone,
+//             action: actionName,
+//             fg,
+//             freq,
+//         });
+//     }
 
-    return {
-        graphic: [
-            {
-                type: 'image',
-                style: {
-                    image: '/half-court.svg',
-                    width: 400,
-                    height: 250,
-                },
-                left: 'center',
-                top: 'middle',
-            },
-            ...labels.map((zone) => ({
-                type: 'rect',
-                left: zone.x,
-                top: zone.y,
-                shape: { width: 80, height: 60 },
-                style: {
-                    fill: zone.color,
-                    opacity: 0.3,
-                },
-            })),
-            ...labels.map((zone) => ({
-                type: 'text',
-                left: zone.x + 5,
-                top: zone.y + 5,
-                style: {
-                    text: `${zone.action}\nFG: ${zone.fg}%\nFreq: ${zone.freq}%`,
-                    font: '13px sans-serif',
-                    fill: '#000',
-                    backgroundColor: '#fff',
-                    borderRadius: 4,
-                    padding: 6,
-                    shadowBlur: 5,
-                    shadowColor: '#aaa',
-                },
-            })),
-        ],
-    };
-}
+//     return {
+//         graphic: [
+//             {
+//                 type: 'image',
+//                 style: {
+//                     image: '/half-court.svg',
+//                     width: 400,
+//                     height: 250,
+//                 },
+//                 left: 'center',
+//                 top: 'middle',
+//             },
+//             ...labels.map((zone) => ({
+//                 type: 'rect',
+//                 left: zone.x,
+//                 top: zone.y,
+//                 shape: { width: 80, height: 60 },
+//                 style: {
+//                     fill: zone.color,
+//                     opacity: 0.3,
+//                 },
+//             })),
+//             ...labels.map((zone) => ({
+//                 type: 'text',
+//                 left: zone.x + 5,
+//                 top: zone.y + 5,
+//                 style: {
+//                     text: `${zone.action}\nFG: ${zone.fg}%\nFreq: ${zone.freq}%`,
+//                     font: '13px sans-serif',
+//                     fill: '#000',
+//                     backgroundColor: '#fff',
+//                     borderRadius: 4,
+//                     padding: 6,
+//                     shadowBlur: 5,
+//                     shadowColor: '#aaa',
+//                 },
+//             })),
+//         ],
+//     };
+// }
