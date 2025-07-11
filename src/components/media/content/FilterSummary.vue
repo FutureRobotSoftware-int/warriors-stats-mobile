@@ -1,7 +1,7 @@
 <template>
         <div 
         class="">
-          <h2 class="text-xl font-semibold mb-3">Resume</h2>
+          <h2 class="text-xl font-semibold mb-3">Totals</h2>
       
           <p class="text-base">
             <strong class="">Active Entries: </strong>
