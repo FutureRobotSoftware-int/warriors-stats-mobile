@@ -31,6 +31,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
         title: { text: title, left: 'center', show: false },
         tooltip: {
             trigger: 'item',
+            appendToBody: true,
             formatter: (params: any) => {
                 const { seriesName, name, value, percent } = params;
                 if (seriesName === 'Frequency') {
