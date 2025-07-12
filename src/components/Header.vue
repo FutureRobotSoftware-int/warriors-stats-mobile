@@ -65,7 +65,7 @@ function handlePlayerChange() {
 
 <template>
     <header class="bg-primary p-0 text-white font-medium">
-        <p class="absolute">v.0.1.8</p>
+        <p class="absolute">v.0.1.9</p>
         <div class="flex items-center justify-between mx-24">
             <div class="mx-4">
                 <img src="../assets/i-1193632972.png" class="size-12">
