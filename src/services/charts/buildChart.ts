@@ -5,6 +5,8 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
 
     let legends = {};
 
+    let labels = {};
+
     if (!showLabels) {
         legends = {
             type: 'plain',
@@ -15,6 +17,15 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
             textStyle: {
                 fontSize: 12
             }
+        };
+        labels = {
+            show: true,
+            position: 'inner',
+            fontSize: 10,
+            formatter: (params: any) => {
+                const abbrev = getAbbreviation(params.name);
+                return `${abbrev}`;
+            },
         }
     } else {
         legends = {
@@ -23,6 +34,48 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
             left: 'left',
             data: Array.isArray(col) ? col : [],
             show: true,
+        }
+        labels = {
+            show: showLabels,
+            formatter: (params: any) => {
+                const fgValue = params.value;
+                const freq = params.data.frequencyValue;
+
+                return `{a|${params.name}}{abg|}\n{hr|}\n {b|Field Goal}: ${fgValue}%\n {b|Frequency}: ${freq}`;
+            },
+            backgroundColor: '#F6F8FC',
+            borderColor: '#8C8D8E',
+            borderWidth: 1,
+            borderRadius: 4,
+
+            rich: {
+                a: {
+                    color: '#4C5058',
+                    lineHeight: 22,
+                    fontWeight: 'bold',
+                    align: 'center',
+                },
+                hr: {
+                    borderColor: '#8C8D8E',
+                    width: '100%',
+                    borderWidth: 1,
+                    height: 0
+                },
+                b: {
+                    color: '#6E7079',
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                    lineHeight: 33,
+                    align: 'left'
+                },
+                per: {
+                    color: '#fff',
+                    backgroundColor: '#6E7079',
+                    padding: [3, 4],
+                    borderRadius: 4,
+                    align: 'left'
+                }
+            }
         }
     }
 
@@ -50,7 +103,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 radius: [0, '40%'],
                 center: ['50%', '40%'],
                 label: {
-                    show: true,
+                    show: false,
                     position: 'inner',
                     fontSize: 10,
                     formatter: (params: any) => {
@@ -74,48 +127,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 labelLine: {
                     length: 30
                 },
-                label: {
-                    show: showLabels,
-                    formatter: (params: any) => {
-                        const fgValue = params.value;
-                        const freq = params.data.frequencyValue;
-
-                        return `{a|${params.name}}{abg|}\n{hr|}\n {b|Field Goal}: ${fgValue}%\n {b|Frequency}: ${freq}`;
-                    },
-                    backgroundColor: '#F6F8FC',
-                    borderColor: '#8C8D8E',
-                    borderWidth: 1,
-                    borderRadius: 4,
-
-                    rich: {
-                        a: {
-                            color: '#4C5058',
-                            lineHeight: 22,
-                            fontWeight: 'bold',
-                            align: 'center',
-                        },
-                        hr: {
-                            borderColor: '#8C8D8E',
-                            width: '100%',
-                            borderWidth: 1,
-                            height: 0
-                        },
-                        b: {
-                            color: '#6E7079',
-                            fontSize: 14,
-                            fontWeight: 'bold',
-                            lineHeight: 33,
-                            align: 'left'
-                        },
-                        per: {
-                            color: '#fff',
-                            backgroundColor: '#6E7079',
-                            padding: [3, 4],
-                            borderRadius: 4,
-                            align: 'left'
-                        }
-                    }
-                },
+                label: labels,
                 data: (fg as { name: string; value: number }[]).map(v => {
                     const freq = (values as { name: string; value: number }[]).find(f => f.name === v.name)?.value || 0;
                     return {
