@@ -15,7 +15,8 @@ const filteredEntries = computed(() =>
 
 const metrics = [
   { title: 'Overall FG%', method: 'calcFG', suffix: '%' },
-  { title: 'Overall PPP', method: 'calcPPP' },
+  { title: 'Average PPP', method: 'calcPPP' },
+  { title: 'Total Points', method: 'calcTotalPoints' },
   // { title: 'Preferred Dribble Hand', method: 'getMostCommonColumnValue', args: ['Off Dribble Hand'] },
   // { title: 'Preferred Footwork', method: 'getMostCommonColumnValue', args: ['Hop/1-2'] },
   // { title: 'Preferred Off.', method: 'getMostCommonColumnValue', args: ['Offensive Action'] },
@@ -26,7 +27,12 @@ const metrics = [
 
 const statCards = computed(() =>
   metrics.map(({ title, method, suffix = '', args = [] }) => {
-    const value = shotDataStore[method](...args, filteredEntries.value)
+    let value  
+    if (title !== 'Total Points') {
+      value = shotDataStore[method](...args, filteredEntries.value)
+    } else {
+      value = shotDataStore[method](...args)
+    }
     return {
       title,
       stat: value + suffix

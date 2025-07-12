@@ -191,6 +191,21 @@ export const useShotData = defineStore('shotData', {
             return result.toFixed(2);
         },
 
+        calcTotalPoints(this: { entries: IShotData[] }, dataset?: IShotData[]): string {
+            const data = dataset ?? this.entries;
+
+            const points = data.map(entry => Number(entry["PTS"])).filter(p => !isNaN(p));
+            const total = points.length;
+
+            if (total === 0) {
+                return "0.0";
+            }
+
+            const sum = points.reduce((a, b) => a + b, 0);
+
+            return sum.toString();
+        },
+
 
         getGroupedData<T extends keyof IShotData>(
             col: T,
