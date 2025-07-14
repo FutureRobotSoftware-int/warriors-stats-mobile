@@ -5,7 +5,8 @@ import { useShotData } from '../../../services/stores/shotData';
 import { fetchDriveIdByVideoName, getGoogleDriveVideoUrl } from '../../../services/utils/getDriveURL';
 
 const isLoading = ref(false);
-const showWarning = ref(false); // ← Nuevo: popup toggle
+const showWarning = ref(false); 
+const showMissingFootageWarning = ref(false);
 
 const shotData = useShotData();
 const driveVideoUrls = ref<string[]>([]);
@@ -17,8 +18,8 @@ const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
 function getIdsByMode(): string[] {
   const ids = shotData.getActiveIds.map(id => String(id));
 
-  // Mostrar advertencia si hay demasiados
   showWarning.value = ids.length > 25;
+  showMissingFootageWarning.value = shotData.getActiveIds.some(id => Number(id) > 196);
 
   if (mode.value === 'random') {
     return ids.sort(() => Math.random() - 0.5).slice(0, 10);
@@ -66,6 +67,10 @@ function handleVideoMounted(el: HTMLVideoElement) {
     <!-- Warning Message -->
     <div v-if="showWarning" class="alert alert-warning shadow-sm text-sm">
       <span>⚠️ Too many entries. Please apply more filters to narrow down the footage.</span>
+    </div>
+    <!-- Missing Footage Warning -->
+    <div v-if="showMissingFootageWarning" class="alert alert-info shadow-sm text-sm">
+      <span>ℹ️ Some entries have an ID greater than 196 and may not have available footage.</span>
     </div>
 
     <div class="flex gap-2">
