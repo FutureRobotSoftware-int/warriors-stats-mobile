@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useShotData } from '../../services/stores/shotData'
 import ExpandedView from '../cards/chartCard/ExpandedView.vue'
 import SingleVideoPlayer from '../media/content/SingleVideoPlayer.vue'
 import type { IShotData } from '../../types/shotData'
 
 const shotDataStore = useShotData()
-const entries = shotDataStore.getActiveEntries
+const entries = computed(() => shotDataStore.getActiveEntries)
 
 const showExpanded = ref(false)
 const selectedEntry = ref<IShotData | null>(null)
