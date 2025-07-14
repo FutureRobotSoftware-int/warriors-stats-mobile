@@ -9,9 +9,9 @@ const showWarning = ref(false);
 const showMissingFootageWarning = ref(false);
 
 const shotData = useShotData();
-const driveVideoUrls = ref<string[]>([]);
 const mode = ref<'all' | 'random'>('all');
 const videoElements = ref<HTMLVideoElement[]>([]);
+const videoItems = ref<{ id: string, videoUrl: string | null }[]>([]);
 
 const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
 
@@ -30,16 +30,17 @@ function getIdsByMode(): string[] {
 async function loadDriveVideos() {
   isLoading.value = true;
   const idsToShow = getIdsByMode();
-  const videoUrls: string[] = [];
+  const results: { id: string, videoUrl: string | null }[] = [];
 
   for (const id of idsToShow) {
     const driveId = await fetchDriveIdByVideoName(id);
-    if (driveId) {
-      videoUrls.push(getGoogleDriveVideoUrl(driveId));
-    }
+    results.push({
+      id,
+      videoUrl: driveId ? getGoogleDriveVideoUrl(driveId) : null
+    });
   }
 
-  driveVideoUrls.value = videoUrls;
+  videoItems.value = results;
   videoElements.value = [];
   isLoading.value = false;
 }
@@ -68,6 +69,7 @@ function handleVideoMounted(el: HTMLVideoElement) {
     <div v-if="showWarning" class="alert alert-warning shadow-sm text-sm">
       <span>⚠️ Too many entries. Please apply more filters to narrow down the footage.</span>
     </div>
+
     <!-- Missing Footage Warning -->
     <div v-if="showMissingFootageWarning" class="alert alert-info shadow-sm text-sm">
       <span>ℹ️ Some entries have an ID greater than 196 and may not have available footage.</span>
@@ -85,18 +87,23 @@ function handleVideoMounted(el: HTMLVideoElement) {
     <div class="overflow-hidden" ref="emblaRef">
       <div class="flex">
         <div
-          v-for="(videoUrl) in driveVideoUrls"
-          :key="videoUrl"
+          v-for="item in videoItems"
+          :key="item.id"
           class="min-w-full px-2 space-y-2"
         >
-          <video
-            class="rounded-lg w-full h-auto"
-            controls
-            preload="metadata"
-            :ref="(el) => el && handleVideoMounted(el as HTMLVideoElement)"
-          >
-            <source :src="videoUrl" type="video/mp4" />
-          </video>
+          <div v-if="item.videoUrl">
+            <video
+              class="rounded-lg w-full h-auto"
+              controls
+              preload="metadata"
+              :ref="(el) => el && handleVideoMounted(el as HTMLVideoElement)"
+            >
+              <source :src="item.videoUrl" type="video/mp4" />
+            </video>
+          </div>
+          <div v-else class="bg-base-200 border border-base-300 p-4 text-center rounded-md text-sm text-gray-600">
+            <strong>No footage found</strong> for ID <code>{{ item.id }}</code>.
+          </div>
         </div>
       </div>
     </div>

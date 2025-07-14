@@ -43,7 +43,7 @@ function closeVideo() {
           </td>
           <td>
             <button class="btn btn-sm btn-info" @click="openVideo(entry)">
-              See
+              Watch
             </button>
           </td>
         </tr>
