@@ -5,7 +5,7 @@ import { useShotData } from '../../../services/stores/shotData';
 import { fetchDriveIdByVideoName, getGoogleDriveVideoUrl } from '../../../services/utils/getDriveURL';
 
 const isLoading = ref(false);
-
+const showWarning = ref(false); // ← Nuevo: popup toggle
 
 const shotData = useShotData();
 const driveVideoUrls = ref<string[]>([]);
@@ -16,6 +16,10 @@ const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
 
 function getIdsByMode(): string[] {
   const ids = shotData.getActiveIds.map(id => String(id));
+
+  // Mostrar advertencia si hay demasiados
+  showWarning.value = ids.length > 25;
+
   if (mode.value === 'random') {
     return ids.sort(() => Math.random() - 0.5).slice(0, 10);
   }
@@ -55,18 +59,15 @@ onMounted(() => {
 function handleVideoMounted(el: HTMLVideoElement) {
   videoElements.value.push(el);
 }
-
-// function stepFrame(index: number) {
-//   const video = videoElements.value[index];
-//   if (video) {
-//     const fps = 30;
-//     video.currentTime += 1 / fps;
-//   }
-// }
 </script>
 
 <template>
   <div class="space-y-4">
+    <!-- Warning Message -->
+    <div v-if="showWarning" class="alert alert-warning shadow-sm text-sm">
+      <span>⚠️ Too many entries. Please apply more filters to narrow down the footage.</span>
+    </div>
+
     <div class="flex gap-2">
       <button class="btn btn-sm btn-primary" @click="mode = 'all'">All</button>
       <button class="btn btn-sm btn-secondary" @click="mode = 'random'">Star Plays</button>
@@ -91,9 +92,6 @@ function handleVideoMounted(el: HTMLVideoElement) {
           >
             <source :src="videoUrl" type="video/mp4" />
           </video>
-          <!-- <div class="text-right">
-            <button class="btn btn-xs btn-outline" @click="stepFrame(index)">Frame Test</button>
-          </div> -->
         </div>
       </div>
     </div>
