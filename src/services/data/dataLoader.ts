@@ -10,10 +10,11 @@ export async function loadPlayers() {
     const parsedData: any = await parseCSV('data/players.csv');
 
     const playersStore = usePlayers();
-    const players: Omit<IPlayer, 'id'>[] = parsedData.map((p: { player: String; number: string; }) => ({
+    const players: Omit<IPlayer, 'id'>[] = parsedData.map((p: { player: String; number: string; folder: string; }) => ({
         player: p.player ?? 'Sin nombre',
         data: p.player ? formatToSlug(p.player) : '',
         number: p.number ?? '',
+        folder: p.folder ?? '',
         isSelected: false
     }));
 

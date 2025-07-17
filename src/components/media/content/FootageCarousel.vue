@@ -3,11 +3,13 @@ import { onMounted, ref, watch } from 'vue';
 import useEmblaCarousel from 'embla-carousel-vue';
 import { useShotData } from '../../../services/stores/shotData';
 import { fetchDriveIdByVideoName, getGoogleDriveVideoUrl } from '../../../services/utils/getDriveURL';
+import { usePlayers } from '../../../services/stores/players';
 
 const isLoading = ref(false);
 const showWarning = ref(false); 
 const showMissingFootageWarning = ref(false);
 
+const playerStore = usePlayers();
 const shotData = useShotData();
 const mode = ref<'all' | 'random'>('all');
 const videoElements = ref<HTMLVideoElement[]>([]);
@@ -30,18 +32,42 @@ function getIdsByMode(): string[] {
 async function loadDriveVideos() {
   isLoading.value = true;
   const idsToShow = getIdsByMode();
-  const results: { id: string, videoUrl: string | null }[] = [];
+  const selectedFolder = playerStore.selectedPlayer?.folder;
 
-  for (const id of idsToShow) {
-    const driveId = await fetchDriveIdByVideoName(id);
-    results.push({
-      id,
-      videoUrl: driveId ? getGoogleDriveVideoUrl(driveId) : null
-    });
+  if (!selectedFolder) {
+    videoItems.value = [];
+    isLoading.value = false;
+    return;
   }
 
-  videoItems.value = results;
+  videoItems.value = [];
   videoElements.value = [];
+
+  const initialBatch = idsToShow.slice(0, 3);
+  const remainingBatch = idsToShow.slice(3);
+
+  const initialResults = await Promise.all(
+    initialBatch.map(async (id) => {
+      const driveId = await fetchDriveIdByVideoName(id, selectedFolder);
+      return {
+        id,
+        videoUrl: driveId ? getGoogleDriveVideoUrl(driveId) : null,
+      };
+    })
+  );
+
+  videoItems.value = initialResults;
+
+  for (const id of remainingBatch) {
+    const driveId = await fetchDriveIdByVideoName(id, selectedFolder);
+    videoItems.value.push({
+      id,
+      videoUrl: driveId ? getGoogleDriveVideoUrl(driveId) : null,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
   isLoading.value = false;
 }
 
@@ -80,9 +106,9 @@ function handleVideoMounted(el: HTMLVideoElement) {
       <button class="btn btn-sm btn-secondary" @click="mode = 'random'">Star Plays</button>
     </div>
 
-    <div v-if="isLoading" class="flex justify-center items-center h-64">
+    <!-- <div v-if="isLoading" class="flex justify-center items-center h-64">
       <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-900"></div>
-    </div>
+    </div> -->
 
     <div class="overflow-hidden" ref="emblaRef">
       <div class="flex">
@@ -93,7 +119,7 @@ function handleVideoMounted(el: HTMLVideoElement) {
         >
           <div v-if="item.videoUrl">
             <video
-              class="rounded-lg w-full h-auto"
+              class="rounded-lg w-full h-auto max-h-full"
               controls
               preload="metadata"
               :ref="(el) => el && handleVideoMounted(el as HTMLVideoElement)"

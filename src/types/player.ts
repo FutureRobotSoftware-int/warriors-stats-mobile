@@ -3,5 +3,6 @@ export interface IPlayer {
     player: string;
     data: string;
     number: string;
+    folder: string;
     isSelected: boolean;
 }
