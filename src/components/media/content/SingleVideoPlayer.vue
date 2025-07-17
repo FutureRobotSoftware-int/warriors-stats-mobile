@@ -4,19 +4,26 @@ import { fetchDriveIdByVideoName, getGoogleDriveVideoUrl } from '../../../servic
 import type { IShotData } from '../../../types/shotData'
 
 const props = defineProps<{
-  entry: IShotData
+  entry: IShotData,
+  folderId?: string
 }>()
 
 const videoUrl = ref('')
 const isLoading = ref(true)
 
 onMounted(async () => {
-  const driveId = await fetchDriveIdByVideoName(String(props.entry.id))
-  if (driveId) {
-    videoUrl.value = getGoogleDriveVideoUrl(driveId)
+  if (!props.folderId) {
+    console.warn('No folderId provided');
+    isLoading.value = false;
+    return;
   }
-  isLoading.value = false
-})
+
+  const driveId = await fetchDriveIdByVideoName(String(props.entry.id), props.folderId);
+  if (driveId) {
+    videoUrl.value = getGoogleDriveVideoUrl(driveId);
+  }
+  isLoading.value = false;
+});
 </script>
 
 <template>

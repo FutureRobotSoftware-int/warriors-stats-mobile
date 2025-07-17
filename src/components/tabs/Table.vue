@@ -4,8 +4,10 @@ import { useShotData } from '../../services/stores/shotData'
 import ExpandedView from '../cards/chartCard/ExpandedView.vue'
 import SingleVideoPlayer from '../media/content/SingleVideoPlayer.vue'
 import type { IShotData } from '../../types/shotData'
+import { usePlayers } from '../../services/stores/players'
 
 const shotDataStore = useShotData()
+const playerStore = usePlayers()
 const entries = computed(() => shotDataStore.getActiveEntries)
 
 const showExpanded = ref(false)
@@ -56,6 +58,6 @@ function closeVideo() {
     :title="'Play ID: ' + selectedEntry.id"
     @close="closeVideo"
   >
-    <SingleVideoPlayer :entry="selectedEntry" />
+    <SingleVideoPlayer :entry="selectedEntry" :folder-id="playerStore.selectedPlayer?.folder" />
   </ExpandedView>
 </template>

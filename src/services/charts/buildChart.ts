@@ -16,36 +16,23 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
             itemWidth: 18,
             textStyle: {
                 fontSize: 12
-            },
-            data: Array.isArray(col)
-                ? col.map(name => {
-                    const abbr = getAbbreviation(name);
-                    return `${name} (${abbr})`;
-                })
-                : [],
+            }
         };
         labels = {
             show: true,
             position: 'inner',
             fontSize: 10,
             formatter: (params: any) => {
-                const match = params.name.match(/^(.+?)\s+\((.+)\)$/);
-                const name = match ? match[1] : params.name;
-                const abbrev = getAbbreviation(name);
+                const abbrev = getAbbreviation(params.name);
                 return `${abbrev}`;
-            }
+            },
         }
     } else {
         legends = {
             orient: 'vertical',
             type: "scroll",
             left: 'left',
-            data: Array.isArray(col)
-                ? col.map(name => {
-                    const abbr = getAbbreviation(name);
-                    return `${name} (${abbr})`;
-                })
-                : [],
+            data: Array.isArray(col) ? col : [],
             show: true,
         }
         labels = {
@@ -129,8 +116,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                     show: true
                 },
                 data: (values as { name: string; value: number }[]).map(v => ({
-                    name: `${v.name} (${getAbbreviation(v.name)})`,
-                    value: v.value,
+                    ...v,
                     itemStyle: { color: getColor(v.name) }
                 }))
             },
@@ -146,8 +132,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 data: (fg as { name: string; value: number }[]).map(v => {
                     const freq = (values as { name: string; value: number }[]).find(f => f.name === v.name)?.value || 0;
                     return {
-                        name: `${v.name} (${getAbbreviation(v.name)})`,
-                        value: v.value,
+                        ...v,
                         frequencyValue: freq,
                         itemStyle: { color: getColor(v.name) }
                     }

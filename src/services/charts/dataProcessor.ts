@@ -1,3 +1,7 @@
+function normalizeName(name: string): string {
+    return name.replace(/\s*\(.*?\)\s*$/, '').trim();
+}
+
 export function getColor(name: string): string {
     const COLOR_MAP: Record<string, string> = {
         //Offensive moves
@@ -40,10 +44,13 @@ export function getColor(name: string): string {
         'Open': '#f89c74',
         'Wide Open': '#87c55f',
     };
-    return COLOR_MAP[name] || '#b3b3b3';
+
+    const cleanName = normalizeName(name);
+    return COLOR_MAP[cleanName] || '#b3b3b3';
 }
 
 export function getAbbreviation(name: string): string {
+
     const ABB_MAP: Record<string, string> = {
         //Offensive moves
         'DHO': 'DHO',
@@ -85,5 +92,7 @@ export function getAbbreviation(name: string): string {
         'Open': 'O',
         'Wide Open': 'WO',
     }
-    return ABB_MAP[name] || 'Null'
+
+    const cleanName = normalizeName(name);
+    return ABB_MAP[cleanName] || 'Null'
 }
