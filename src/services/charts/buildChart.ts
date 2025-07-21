@@ -16,6 +16,10 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
             itemWidth: 18,
             textStyle: {
                 fontSize: 12
+            },
+            formatter: (name: string) => {
+                const abbr = getAbbreviation(name);
+                return `${name} (${abbr})`;
             }
         };
         labels = {

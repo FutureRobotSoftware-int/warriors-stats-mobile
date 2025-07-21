@@ -1,5 +1,5 @@
 function normalizeName(name: string): string {
-    return name.replace(/\s*\(.*?\)\s*$/, '').trim();
+    return name.replace(/\([^)]*\)/g, '').trim();
 }
 
 export function getColor(name: string): string {

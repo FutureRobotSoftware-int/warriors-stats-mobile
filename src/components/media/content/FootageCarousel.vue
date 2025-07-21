@@ -117,9 +117,9 @@ function handleVideoMounted(el: HTMLVideoElement) {
           :key="item.id"
           class="min-w-full px-2 space-y-2"
         >
-          <div v-if="item.videoUrl">
+          <div v-if="item.videoUrl" class="flex justify-center">
             <video
-              class="rounded-lg w-full h-auto max-h-full"
+              class="rounded-lg w-fit h-auto md:h-115"
               controls
               preload="metadata"
               :ref="(el) => el && handleVideoMounted(el as HTMLVideoElement)"
