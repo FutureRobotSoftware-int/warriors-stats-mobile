@@ -35,7 +35,7 @@ export function getColor(name: string): string {
         'Right to LeftPickup': '#9eb9f3',
         'N/A': '#2c9ec5',
         //Hop/1-2
-        'Hop  ': '#66c5cc',
+        'Hop': '#66c5cc',
         '1-2 Right/Left': '#f6cf71',
         '1-2 Left/Right': '#f89c74',
         //Defender Distance
@@ -83,7 +83,7 @@ export function getAbbreviation(name: string): string {
         'Right to LeftPickup': 'RtL',
         'N/A': 'N/A',
         //Hop/1-2
-        'Hop  ': 'H',
+        'Hop': 'H',
         '1-2 Right/Left': 'R/L',
         '1-2 Left/Right': 'L/R',
         //Defender Distance
