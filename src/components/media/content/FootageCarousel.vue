@@ -6,7 +6,7 @@ import { useShotData } from '../../../services/stores/shotData'
 import { fetchDriveIdByVideoName, getGoogleDriveVideoUrl } from '../../../services/utils/getDriveURL'
 import { usePlayers } from '../../../services/stores/players'
 import 'video.js/dist/video-js.css'
-import VideoPlayer from '../videoPlayer/videoPlayer.vue'
+import VideoPlayer from '../videoPlayer/VideoPlayer.vue'
 
 // Reactive state variables
 const isLoading = ref(false) // Loading state for videos
