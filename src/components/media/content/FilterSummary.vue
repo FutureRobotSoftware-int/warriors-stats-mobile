@@ -5,7 +5,7 @@
       
           <p class="text-base">
             <strong class="">Active Entries: </strong>
-            <span class="font-mono">{{ filteredCount }}/{{ totalCount }}</span>
+            <span class="font-mono">{{ filteredCount }}/{{ totalCount }} ({{ frequency }}%)</span>
           </p>
       
           <div v-if="hasFilters" class="mb-4">
@@ -57,6 +57,10 @@
   
   const totalCount = computed(() => shotDataStore.getAll.length)
   const filteredCount = computed(() => filteredEntries.value.length)
+
+  const frequency = computed(() => {
+    return totalCount.value ? Math.round((filteredCount.value / totalCount.value) * 100) : 0
+  })
   
   function clearFilters() {
       filters.clearAll()
