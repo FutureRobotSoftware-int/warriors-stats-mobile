@@ -67,16 +67,16 @@ onMounted(async () => {
 </script>
 
 <template>
-    <header class="bg-primary p-0 text-white font-medium">
+    <header class="bg-black p-0 text-white font-medium">
         <p class="absolute text-sm">ShotBreakdown</p>
-        <p class="absolute text-sm right-0">v.0.2.4</p>
+        <p class="absolute text-sm right-0">v.0.2.9</p>
         <div class="flex items-center justify-between mx-24">
             <div class="mx-4">
-                <img src="../assets/i-1193632972.png" class="size-12">
+                <img src="../assets/BBALLBREAKDOWN-Social-Media-Icon-Medium.png" class="size-12">
             </div>
             <div class="grow mx-4">
                 <select name="" id="player-select" v-model="selectedPlayerId" @change="handlePlayerChange"
-                    class="select select-md rounded-full border-base-100 bg-primary border-2 focus:outline-base-100">
+                    class="select select-md rounded-full border-base-100 bg-black border-2 focus:outline-base-100">
                     <option value="" class="lg:text-sm">-- Select a player --</option>
                     <option class="lg:text-sm" v-for="player in playersStore.players" :key="player.id"
                         :value="player.id">
@@ -88,7 +88,7 @@ onMounted(async () => {
                 <select
                     v-model="selectedPeriodId"
                     @change="handlePeriodChange"
-                    class="select select-md rounded-full border-base-100 bg-primary w-fit border-2 focus:outline-base-100"
+                    class="select select-md rounded-full border-base-100 bg-black w-fit border-2 focus:outline-base-100"
                 >
                     <option value="">-- Select a season --</option>
                     <option
@@ -104,7 +104,7 @@ onMounted(async () => {
             <div class="mx-4">
                 <select
                     v-model="selectedMode"
-                    class="select select-md rounded-full border-base-100 bg-primary w-fit border-2 focus:outline-base-100"
+                    class="select select-md rounded-full border-base-100 bg-black w-fit border-2 focus:outline-base-100"
                 >
                     <option value="">-- Select a mode --</option>
                     <option value="general" class="lg:text-sm">General</option>

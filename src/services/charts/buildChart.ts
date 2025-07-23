@@ -1,11 +1,13 @@
 import type { IChartOptions } from "../../types/chartOptions"
 import { getColor, getAbbreviation } from "./dataProcessor";
 
-export function buildChartOption({ title, values, fg, col }: IChartOptions, showLabels = true) {
+export function buildChartOption({ title, values, fg, col }: IChartOptions, showLabels = true, isOffPl?: boolean) {
 
     let legends = {};
 
     let labels = {};
+
+    let center = [];
 
     if (!showLabels) {
         legends = {
@@ -30,7 +32,8 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 const abbrev = getAbbreviation(params.name);
                 return `${abbrev}`;
             },
-        }
+        };
+        center = ['50%', '35%']
     } else {
         legends = {
             orient: 'vertical',
@@ -80,7 +83,26 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                     align: 'left'
                 }
             }
-        }
+        };
+        center = ['50%', '40%']
+    }
+
+    if (isOffPl) {
+        legends = {
+            type: 'plain',
+            orient: 'horizontal',
+            top: 'bottom',
+            itemGap: 12,
+            itemWidth: 18,
+            textStyle: {
+                fontSize: 12
+            },
+            data: ['Flare', 'DHO', 'Lift', 'Post Kick Out', 'Drive Kick', 'Iso', 'PnR', 'PnPop', 'Pin Down', 'Spot Up'],
+            formatter: (name: string) => {
+                const abbr = getAbbreviation(name);
+                return `${name} (${abbr})`;
+            }
+        };
     }
 
     return {
@@ -106,7 +128,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 type: 'pie',
                 selectedMode: 'single',
                 radius: [0, '40%'],
-                center: ['50%', '40%'],
+                center: center,
                 label: {
                     show: false,
                     position: 'inner',
@@ -128,7 +150,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 name: 'FG%',
                 type: 'pie',
                 radius: ['50%', '65%'],
-                center: ['50%', '40%'],
+                center: center,
                 labelLine: {
                     length: 30
                 },

@@ -23,13 +23,13 @@ const filters = useGraphFilters()
 const mode = computed(() => filters.mode)
 
 const metrics = [
-  { title: 'Area', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Area'] },
-  { title: 'Player Direction', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Player Direction'] },
-  { title: 'Offensive Action', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Offensive Action'] },
-  { title: 'Footwork', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Hop/1-2'] },
-  { title: 'Off Dribble Hand', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Off Dribble Hand'] },
-  { title: 'Defender Distance', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Defender Distance'] },
-  { title: 'Pass from Direction', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Pass Direction'] },
+  { title: 'Area', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Area'], isOffPl: false },
+  { title: 'Pass from Direction', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Pass Direction'], isOffPl: false },
+  { title: 'Offensive Action', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Offensive Action'], isOffPl: true },
+  { title: 'Footwork', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Hop/1-2'], isOffPl: false },
+  { title: 'Off Dribble Hand', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Off Dribble Hand'], isOffPl: false },
+  { title: 'Player Direction', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Player Direction'], isOffPl: false },
+  { title: 'Defender Distance', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Defender Distance'], isOffPl: false },
 ]
 
 const filteredEntries = (fieldKey) =>
@@ -49,10 +49,8 @@ const filteredEntries = (fieldKey) =>
 
     const col = shotDataStore[metric.legend](...metric.args, dataset)
 
-    const option = buildChartOption({ title: metric.title, values, fg, col }, false)
+    const option = buildChartOption({ title: metric.title, values, fg, col }, false, metric.isOffPl)
     const altOption = buildChartOption({ title: metric.title, values, fg, col }, true)
-
-    
 
     return {
       ...metric,

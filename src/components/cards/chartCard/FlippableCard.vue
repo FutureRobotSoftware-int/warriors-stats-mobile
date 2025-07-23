@@ -1,6 +1,6 @@
 <template>
     <div class="relative">
-        <div class="card bg-base-100 shadow-sm h-78 w-67 perspective overflow-visible">
+        <div class="card bg-base-100 shadow-sm h-83 w-68.5 perspective overflow-visible">
             <div class="relative h-full w-full transition-transform duration-500 transform-style-preserve-3d"
                 :class="{ 'rotate-y-180': isFlipped }">
                 <CardFront :title="title" @flip="toggleFlip" @expand="isExpanded = true">

@@ -9,7 +9,7 @@ const selected = ref(0)
 </script>
 
 <template>
-    <div class="flex h-[calc(90dvh-4rem)] border border-gray-200 rounded-lg overflow-hidden m-1">
+    <div class="flex h-[calc(92.5dvh-4rem)] border border-gray-200 rounded-lg overflow-hidden m-0.5">
       <div class="flex flex-col bg-base-200">
         <button
           v-for="(tab, idx) in tabs"
@@ -31,7 +31,7 @@ const selected = ref(0)
           </div>
         </div>
         <div v-else-if="selected === 1" class="flex-1 overflow-y-auto">
-          <div class="m-4">
+          <div class="m-1">
             <ChartsDisplay />
           </div>
         </div>
