@@ -12,20 +12,25 @@ export const useGraphFilters = defineStore('graphFilters', {
         setMode(newMode: 'general' | 'most-common') {
             this.mode = newMode;
         },
-        setFilter(field: string, value: string) {
-            if (!this.selectedFilters[field]) {
-                this.selectedFilters[field] = new Set();
-            }
-
-            if (this.selectedFilters[field].has(value)) {
-                this.selectedFilters[field].delete(value);
-                if (this.selectedFilters[field].size === 0) {
-                    delete this.selectedFilters[field];
-                    if (this.activeSource === field) this.activeSource = null;
-                }
-            } else {
-                this.selectedFilters[field].add(value);
+        setFilter(field: string, value: string, isSingleSelect: boolean = false) {
+            if (isSingleSelect) {
+                this.selectedFilters[field] = new Set([value]);
                 this.activeSource = field;
+            } else {
+                if (!this.selectedFilters[field]) {
+                    this.selectedFilters[field] = new Set();
+                }
+
+                if (this.selectedFilters[field].has(value)) {
+                    this.selectedFilters[field].delete(value);
+                    if (this.selectedFilters[field].size === 0) {
+                        delete this.selectedFilters[field];
+                        if (this.activeSource === field) this.activeSource = null;
+                    }
+                } else {
+                    this.selectedFilters[field].add(value);
+                    this.activeSource = field;
+                }
             }
 
             console.log('Filtros actuales:', JSON.stringify(
@@ -68,6 +73,14 @@ export const useGraphFilters = defineStore('graphFilters', {
                     this.activeSource = null;
                 }
             }
+        },
+        replaceFilter(field: string, value: string) {
+            this.clearFilter(field);
+
+            this.selectedFilters[field] = new Set([value]);
+            this.activeSource = field;
+
+            console.log('Filtro reemplazado:', field, 'con valor:', value);
         }
     }
 })

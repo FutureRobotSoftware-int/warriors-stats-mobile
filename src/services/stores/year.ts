@@ -45,13 +45,19 @@ export const usePeriod = defineStore('period', {
             const filterStore = useGraphFilters();
 
             this.periods.forEach(p => {
-                p.isSelected = p.id === period.id;
+                p.isSelected = false;
             });
 
+            period.isSelected = true;
+
+            filterStore.clearFilter("Year");
+
             if (period.period !== "All time") {
-                filterStore.setFilter("Year", period.period);
-            } else {
-                filterStore.clearFilter("Year");
+                filterStore.replaceFilter("Year", period.period);
+            }
+
+            if (period.period !== "All time") {
+                filterStore.setFilter("Year", period.period, true);
             }
 
             console.log("[Period Selected]:", period);
