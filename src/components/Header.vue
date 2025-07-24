@@ -15,55 +15,60 @@ const periodStore = usePeriod()
 const graphFiltersStore = useGraphFilters()
 const shotDataStore = useShotData()
 
-    watch(selectedMode, (mode) => {
-        console.log('Mode changed to:', mode)
-        graphFiltersStore.setMode(mode)
+watch(() => graphFiltersStore.selectedFilters, (newFilters) => {
+  if (Object.keys(newFilters).length === 0) {
+    periodStore.selectAllTime();
+    selectedMode.value = 'general';
+    
+    if (periodStore.allTimePeriod) {
+      selectedPeriodId.value = periodStore.allTimePeriod.id;
+    }
+  }
+}, { deep: true })
 
-    if (mode === 'general') {
-        graphFiltersStore.clearAllGeneral()
+
+watch(selectedMode, (mode) => {
+  console.log('Mode changed to:', mode)
+  graphFiltersStore.setMode(mode)
+
+  if (mode === 'general') {
+    graphFiltersStore.clearAllGeneral()
+  }
+
+  if (mode === 'most-common') {
+    graphFiltersStore.clearAll()
+    const commonOffensive = shotDataStore.getMostCommonColumnValue('Offensive Action')
+    const defaultAreas = ['Left Wing', 'Right Wing']
+
+    if (commonOffensive) {
+      graphFiltersStore.setFilter('Offensive Action', commonOffensive)
     }
 
-    if (mode === 'most-common') {
-            graphFiltersStore.clearAll()
-
-            const commonOffensive = shotDataStore.getMostCommonColumnValue('Offensive Action')
-            const defaultAreas = ['Left Wing', 'Right Wing']
-
-            if (commonOffensive) {
-                graphFiltersStore.setFilter('Offensive Action', commonOffensive)
-            }
-
-            defaultAreas.forEach(area => {
-                graphFiltersStore.setFilter('Area', area)
-            })
-        }
+    defaultAreas.forEach(area => {
+      graphFiltersStore.setFilter('Area', area)
     })
-
-onMounted(async () => {
-  await loadPlayers()
-
-    const firstPlayer = playersStore.players[0]
-    if (firstPlayer) {
-        selectedPlayerId.value = firstPlayer.id
-        playersStore.selectPlayer(firstPlayer)
-    } 
-
-  const firstPeriod = periodStore.periods[0]
-    if (firstPeriod) {
-        selectedPeriodId.value = firstPeriod.id
-        periodStore.selectPeriod(firstPeriod)
-    }
+  }
 })
 
-    function handlePeriodChange() {
-    const selected = periodStore.periods.find(p => p.id === selectedPeriodId.value)
-    if (selected) periodStore.selectPeriod(selected)
-    }
+onMounted(async () => {
+  await loadPlayers();
 
-    function handlePlayerChange() {
-    const selected = playersStore.players.find(p => p.id === selectedPlayerId.value)
-    if (selected) playersStore.selectPlayer(selected)
-    }
+  const firstPlayer = playersStore.players[0];
+  if (firstPlayer) {
+    selectedPlayerId.value = firstPlayer.id;
+    playersStore.selectPlayer(firstPlayer);
+  }
+})
+
+function handlePeriodChange() {
+  const selected = periodStore.periods.find(p => p.id === selectedPeriodId.value)
+  if (selected) periodStore.selectPeriod(selected)
+}
+
+function handlePlayerChange() {
+  const selected = playersStore.players.find(p => p.id === selectedPlayerId.value)
+  if (selected) playersStore.selectPlayer(selected)
+}
 </script>
 
 <template>

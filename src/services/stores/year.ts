@@ -15,6 +15,9 @@ export const usePeriod = defineStore('period', {
         },
         allPeriods(state): IPeriod[] {
             return state.periods;
+        },
+        allTimePeriod(state): IPeriod | undefined {
+            return state.periods.find(p => p.period === "All time");
         }
     },
 
@@ -23,17 +26,19 @@ export const usePeriod = defineStore('period', {
             const shotDataStore = useShotData();
             const uniquePeriods = shotDataStore.getUniqueColumnValues("Year");
 
-            this.periods = uniquePeriods.map(p => ({
-                id: this.nextId++,
-                period: p,
-                isSelected: false
-            }));
-            this.periods.push({
+            this.periods = [{
                 id: this.nextId++,
                 period: "All time",
                 isSelected: true
-            })
-            console.log(this.periods)
+            }];
+
+            this.periods.push(...uniquePeriods.map(p => ({
+                id: this.nextId++,
+                period: p,
+                isSelected: false
+            })));
+
+            console.log(this.periods);
         },
 
         selectPeriod(period: IPeriod) {
@@ -50,6 +55,13 @@ export const usePeriod = defineStore('period', {
             }
 
             console.log("[Period Selected]:", period);
+        },
+
+        selectAllTime() {
+            const allTime = this.allTimePeriod;
+            if (allTime) {
+                this.selectPeriod(allTime);
+            }
         }
     }
 });
