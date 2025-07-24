@@ -42,17 +42,26 @@ export const useGraphFilters = defineStore('graphFilters', {
         },
 
         toggleCategoryVisibility(field: string, category: string) {
-            // if (!this.hiddenCategories[field]) {
-            //     this.hiddenCategories[field] = new Set()
-            // }
+            if (!this.hiddenCategories[field]) {
+                this.hiddenCategories[field] = new Set();
+            }
 
-            // if (this.hiddenCategories[field].has(category)) {
-            //     this.hiddenCategories[field].delete(category)
-            // } else {
-            //     this.hiddenCategories[field].add(category)
-            // }
-            // console.log(this.hiddenCategories)
-            console.log(field, category)
+            if (this.hiddenCategories[field].has(category)) {
+                this.hiddenCategories[field].delete(category);
+            } else {
+                this.hiddenCategories[field].add(category);
+            }
+
+            if (this.hiddenCategories[field].size === 0) {
+                delete this.hiddenCategories[field];
+            }
+
+            console.log('Categorías ocultas:', JSON.stringify(
+                Object.fromEntries(
+                    Object.entries(this.hiddenCategories).map(([k, v]) => [k, Array.from(v)])
+                ),
+                null, 2
+            ));
         },
 
         clearAll() {
@@ -81,6 +90,10 @@ export const useGraphFilters = defineStore('graphFilters', {
             this.activeSource = field;
 
             console.log('Filtro reemplazado:', field, 'con valor:', value);
-        }
+        },
+
+        clearHiddenCategories() {
+            this.hiddenCategories = {};
+        },
     }
 })

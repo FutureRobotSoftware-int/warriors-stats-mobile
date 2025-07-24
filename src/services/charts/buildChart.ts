@@ -2,28 +2,31 @@ import type { IChartOptions } from "../../types/chartOptions"
 import { getColor, getAbbreviation } from "./dataProcessor";
 
 export function buildChartOption({ title, values, fg, col }: IChartOptions, showLabels = true, isOffPl?: boolean) {
+    // Configuración común
+    const commonLegendConfig = {
+        type: 'plain', // Cambiado a 'plain' para todos los gráficos
+        orient: 'horizontal',
+        top: 'bottom',
+        left: 'left',
+        itemGap: 12,
+        itemWidth: 18,
+        textStyle: {
+            fontSize: 12
+        },
+        data: Array.isArray(col) ? col : [],
+        formatter: (name: string) => {
+            const abbr = getAbbreviation(name);
+            return `${name} (${abbr})`;
+        },
+        selected: {} // Esto permitirá manejar múltiples selecciones
+    };
 
-    let legends = {};
-
+    let legends = { ...commonLegendConfig };
     let labels = {};
-
     let center = [];
+    let selectedMode = 'multiple'; // Cambiado a 'multiple' para permitir selección múltiple
 
     if (!showLabels) {
-        legends = {
-            type: 'plain',
-            orient: 'horizontal',
-            top: 'bottom',
-            itemGap: 12,
-            itemWidth: 18,
-            textStyle: {
-                fontSize: 12
-            },
-            formatter: (name: string) => {
-                const abbr = getAbbreviation(name);
-                return `${name} (${abbr})`;
-            }
-        };
         labels = {
             show: true,
             position: 'inner',
@@ -33,14 +36,12 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 return `${abbrev}`;
             },
         };
-        center = ['50%', '35%']
+        center = ['50%', '35%'];
     } else {
         legends = {
+            ...legends,
             orient: 'vertical',
-            type: "scroll",
-            left: 'left',
-            data: Array.isArray(col) ? col : [],
-            show: true,
+            top: 'left',
         }
         labels = {
             show: showLabels,
@@ -54,7 +55,6 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
             borderColor: '#8C8D8E',
             borderWidth: 1,
             borderRadius: 4,
-
             rich: {
                 a: {
                     color: '#4C5058',
@@ -84,24 +84,14 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 }
             }
         };
-        center = ['50%', '40%']
+        center = ['50%', '40%'];
     }
 
+    // Configuración específica para acciones ofensivas
     if (isOffPl) {
         legends = {
-            type: 'plain',
-            orient: 'horizontal',
-            top: 'bottom',
-            itemGap: 12,
-            itemWidth: 18,
-            textStyle: {
-                fontSize: 12
-            },
-            data: ['Flare', 'DHO', 'Lift', 'Post Kick Out', 'Drive Kick', 'Iso', 'PnR', 'PnPop', 'Pin Down', 'Spot Up'],
-            formatter: (name: string) => {
-                const abbr = getAbbreviation(name);
-                return `${name} (${abbr})`;
-            }
+            ...legends,
+            data: ['Flare', 'DHO', 'Lift', 'Post Kick Out', 'Drive Kick', 'Iso', 'PnR', 'PnPop', 'Pin Down', 'Spot Up']
         };
     }
 
@@ -126,7 +116,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
             {
                 name: 'Frequency',
                 type: 'pie',
-                selectedMode: 'single',
+                selectedMode: selectedMode, // Usamos la variable configurada arriba
                 radius: [0, '40%'],
                 center: center,
                 label: {
@@ -165,7 +155,7 @@ export function buildChartOption({ title, values, fg, col }: IChartOptions, show
                 })
             }
         ],
-    }
+    };
 }
 
 export function buildBarChartOption(

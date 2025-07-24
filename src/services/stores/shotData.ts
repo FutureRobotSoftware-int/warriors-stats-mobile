@@ -351,17 +351,18 @@ export const useShotData = defineStore('shotData', {
         ) {
             return this.entries.filter(entry => {
                 for (const [key, valueSet] of Object.entries(filters)) {
-                    if (ignoreSelf && key === ignoredField) continue
-                    const val = String(entry[key as keyof IShotData])
-                    if (!valueSet.has(val)) return false
+                    if (ignoreSelf && key === ignoredField) continue;
+                    const val = String(entry[key as keyof IShotData]);
+                    if (!valueSet.has(val)) return false;
                 }
 
                 for (const [field, hiddenSet] of Object.entries(hidden)) {
-                    if (hiddenSet.has(String(entry[field as keyof IShotData]))) return false
+                    const val = String(entry[field as keyof IShotData]);
+                    if (hiddenSet.has(val)) return false;
                 }
 
-                return true
-            })
+                return true;
+            });
         },
 
         getInefficiencyByColumn<T extends keyof IShotData>(

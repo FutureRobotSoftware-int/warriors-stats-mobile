@@ -32,9 +32,13 @@ const metrics = [
   { title: 'Defender Distance', legend: 'getUniqueColumnValues', fieldGoal: 'getFGByColumn', data: 'getGroupedData', args: ['Defender Distance'], isOffPl: false },
 ]
 
-const filteredEntries = (fieldKey) =>
-  shotDataStore.getFilteredEntries(filters.selectedFilters, filters.hiddenCategories, fieldKey, false)
-
+  const filteredEntries = (fieldKey) =>
+    shotDataStore.getFilteredEntries(
+      filters.selectedFilters, 
+      filters.hiddenCategories, 
+      fieldKey, 
+      false
+  )
 
   const enrichedData = computed(() =>
   metrics.map((metric) => {
